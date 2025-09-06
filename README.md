@@ -1,7 +1,7 @@
 # LaTeX Thesis Compilation
 
 ## Viewing the Report
-To view the complete thesis report, open the **`rapport.pdf`** file.
+To view the complete thesis report, open the **`rapport.pdf`** file. You can use your PDF reader to add comments, highlights, and annotations directly on the document for feedback and review purposes.
 
 ## Commands
 
