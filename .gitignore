@@ -1,0 +1,56 @@
+# AI Context - Contains sensitive project information
+ai-context/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.brf
+*.maf
+*.mtc
+*.mtc0
+*.mtc1
+*.mtc2
+*.mtc3
+*.mtc4
+*.mtc5
+*.mtc6
+*.mtc7
+*.mtc8
+*.mtc9
+*.mtc10
+*.mtc11
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.figlist
+*.makefile
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
