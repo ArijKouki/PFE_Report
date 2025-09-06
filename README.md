@@ -1,5 +1,8 @@
 # LaTeX Thesis Compilation
 
+## Viewing the Report
+To view the complete thesis report, open the **`rapport.pdf`** file.
+
 ## Commands
 
 **Fast compilation (most edits):**
