@@ -1,0 +1,43 @@
+@startuml
+
+start
+
+:Agent receives `filePath` from IDE Extension;
+
+:Call **ReadFileFromWorkspace** Tool\nto get file content;
+
+:Call **CodeAnalysisTool**\nto find all violations;
+
+if (Any violations found?) then (Yes)
+    partition "Process Violations in Parallel" {
+        note right
+            For each violation found, a task
+            is spawned to run these steps.
+            All tasks run in parallel with a
+            concurrency limit.
+        end note
+        fork
+            group Process Violation 1
+                :Call **ViolationExplanationTool**;
+                :Call **CodeFixTool**;
+            end group
+        fork again
+            group Process Violation 2
+                :Call **ViolationExplanationTool**;
+                :Call **CodeFixTool**;
+            end group
+        fork again
+            group ...
+                '...';
+            end group
+        end fork
+    }
+    ' The "end fork" above implicitly handles waiting/synchronization.
+    :Call **Finish** Tool:\nConsolidate all explanations & fixes;
+else (No)
+    :Call **Finish** Tool:\nReport "No issues found";
+endif
+
+stop
+
+@enduml

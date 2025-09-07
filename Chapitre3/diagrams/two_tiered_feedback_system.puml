@@ -1,0 +1,46 @@
+@startuml Two-Tiered Feedback System
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+actor "YouTube Developer" as Dev
+participant "YouTube IDE Extension" as IDE
+participant "Tier 1: Instant Feedback" as Tier1
+participant "Tier 2: Intelligent Analysis" as Tier2
+
+== Keystroke-Level Response ==
+Dev -> IDE: Types code
+IDE -> Tier1: Immediate keystroke detection
+Tier1 -> IDE: Quick UI adjustments
+IDE -> Dev: Instant visual feedback
+
+note right of Tier1
+**Tier 1: Instant Responsive Feedback**
+- Reacts to every keystroke
+- Maintains UI responsiveness
+- Marks outdated diagnostics as [Outdated]
+- Provides immediate visual feedback
+end note
+
+== Pause-Based Analysis ==
+Dev -> IDE: Pauses typing
+IDE -> Tier2: Trigger intelligent analysis
+Tier2 -> Tier2: Generate contextual hash
+Tier2 -> Tier2: Track code changes
+Tier2 -> IDE: Fresh analysis results
+IDE -> Dev: Updated diagnostics
+
+note left of Tier2
+**Tier 2: Intelligent Contextual Analysis**
+- Activates on typing pause
+- Uses contextual hash fingerprinting
+- Tracks code changes even when content moves
+- Provides deep semantic analysis
+end note
+
+== Stale Detection ==
+Dev -> IDE: Continues typing
+IDE -> Tier1: Detect code changes
+Tier1 -> IDE: Mark previous results as [Outdated]
+IDE -> Dev: Show [Outdated] indicators
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml System Architecture
+!theme plain
+
+rectangle "IDE" as IDE_ENV {
+    rectangle "YouTube IDE Extension" as IDE
+    note right of IDE
+    Displays analysis feedback
+    within the editor
+    end note
+}
+
+rectangle "AI Agent Framework" as AGENT_ENV {
+    rectangle "LLM Best Practices Agent" as Agent
+    note right of Agent
+    Performs AI-driven
+    best-practice analysis
+    end note
+}
+
+' Force square layout with hidden connections
+IDE_ENV -[hidden]down- AGENT_ENV
+
+' Main architectural flow
+IDE --> Agent : Analysis Request
+Agent --> IDE : Analysis Results
+
+@enduml

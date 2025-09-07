@@ -1,0 +1,50 @@
+@startuml Agent Architecture Comparison
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title Agent Architecture Comparison
+
+package "Executable Agent" as ExecAgent {
+    rectangle "Agent Controller" as ExecController
+    rectangle "Tool 1" as ExecTool1
+    rectangle "Tool 2" as ExecTool2
+    rectangle "Tool 3" as ExecTool3
+    rectangle "Tool N" as ExecTool4
+    
+    ExecController --> ExecTool1 : Sequential
+    ExecTool1 --> ExecTool2 : Flow
+    ExecTool2 --> ExecTool3 : Execution
+    ExecTool3 --> ExecTool4 : Path
+}
+
+package "ReAct Agent" as ReActAgent {
+    rectangle "LLM Controller" as ReActController
+    rectangle "Reasoning Loop" as ReActLoop
+    rectangle "Action Selection" as ReActAction
+    rectangle "Tool Execution" as ReActExec
+    rectangle "Observation" as ReActObs
+    
+    ReActController --> ReActLoop : Dynamic
+    ReActLoop --> ReActAction : Decision
+    ReActAction --> ReActExec : Making
+    ReActExec --> ReActObs : Process
+    ReActObs --> ReActLoop : Feedback
+}
+
+note right of ExecAgent
+**Deterministic Flow:**
+- Predefined sequence
+- Predictable behavior
+- Efficient execution
+- Easy debugging
+end note
+
+note right of ReActAgent
+**Dynamic Reasoning:**
+- LLM-driven decisions
+- Adaptive behavior
+- Flexible execution
+- Complex orchestration
+end note
+
+@enduml

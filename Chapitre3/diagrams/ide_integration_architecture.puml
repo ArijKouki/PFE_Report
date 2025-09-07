@@ -1,0 +1,64 @@
+@startuml IDE Integration Architecture
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title YouTube IDE Extension Integration Architecture
+
+package "YouTube IDE Extension" as Extension {
+    rectangle "Editor Action\n(Lightbulb Icon)" as EditorAction
+    rectangle "Command Palette\nIntegration" as CommandPalette
+    rectangle "Progress Notification\nSystem" as Progress
+    rectangle "Diagnostic Manager" as DiagnosticMgr
+    rectangle "Hover Provider" as HoverProvider
+    rectangle "Quick Fix Handler" as QuickFix
+}
+
+package "Native IDE System" as IDE {
+    rectangle "Editor Title Bar" as TitleBar
+    rectangle "Command Palette" as Palette
+    rectangle "Diagnostic System" as DiagnosticSys
+    rectangle "Hover System" as HoverSys
+    rectangle "Code Action System" as CodeAction
+}
+
+package "AI Analysis System" as AI {
+    rectangle "LLM Best Practices Agent" as Agent
+    rectangle "Two-Tiered Feedback\nSystem" as FeedbackSystem
+}
+
+' Entry Points
+EditorAction --> TitleBar : "Displays icon"
+CommandPalette --> Palette : "Registers command"
+
+' Analysis Flow
+EditorAction --> Progress : "Triggers analysis"
+CommandPalette --> Progress : "Triggers analysis"
+Progress --> Agent : "Sends analysis request"
+Agent --> DiagnosticMgr : "Returns violations"
+
+' Feedback Integration
+DiagnosticMgr --> DiagnosticSys : "Creates native diagnostics"
+HoverProvider --> HoverSys : "Provides formatted fixes"
+QuickFix --> CodeAction : "Calls coding assistant"
+
+' Stale Detection
+FeedbackSystem --> DiagnosticMgr : "Manages stale state"
+DiagnosticMgr --> DiagnosticSys : "Updates [Outdated] markers"
+
+note right of Extension
+**YouTube IDE Extension Components:**
+- Lightweight client design
+- Orchestrates user-AI interaction
+- Handles UI concerns and progress indication
+- Manages diagnostic lifecycle
+end note
+
+note left of IDE
+**Native IDE Integration:**
+- Leverages existing diagnostic patterns
+- Uses standard hover and code action systems
+- Maintains familiar user experience
+- No learning curve for developers
+end note
+
+@enduml

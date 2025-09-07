@@ -1,0 +1,15 @@
+@startuml Sequence Diagram
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+actor "YouTube Developer" as Dev 
+participant "IDE Extension" as Ext 
+participant "LLM Best Practices Agent" as Agent
+
+Dev -> Ext: Initiates analysis for best practices
+Ext -> Agent: Analysis Request
+Agent -> Agent: Process Request
+Agent --> Ext: Analysis Results
+Ext --> Dev: Display results with fixes
+
+@enduml

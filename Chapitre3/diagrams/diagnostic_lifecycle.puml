@@ -1,0 +1,59 @@
+@startuml Diagnostic Lifecycle
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title Diagnostic Lifecycle Management
+
+start
+
+:Developer triggers analysis;
+
+:YouTube IDE Extension\nsends request to Agent;
+
+:Agent processes file\nand returns violations;
+
+:Extension creates\nnative IDE diagnostics;
+
+:Diagnostics displayed\nin IDE with explanations;
+
+if (Developer hovers over diagnostic?) then (Yes)
+    :Show formatted code fix\nin hover provider;
+    :Developer can copy or\napply Quick Fix;
+else (No)
+    :Diagnostics remain visible;
+endif
+
+if (Developer continues typing?) then (Yes)
+    :Tier 1 detects code changes;
+    :Mark diagnostics as [Outdated];
+    :Show stale indicators;
+    
+    if (Developer pauses typing?) then (Yes)
+        :Tier 2 generates\ncontextual hash;
+        :Track code changes;
+        :Trigger fresh analysis;
+        :Update diagnostics\nwith new results;
+    else (No)
+        :Diagnostics remain [Outdated];
+    endif
+else (No)
+    :Diagnostics remain current;
+endif
+
+if (Developer closes file?) then (Yes)
+    :Clean up diagnostics;
+    stop
+else (No)
+    :Continue monitoring;
+endif
+
+note right
+**Key Lifecycle Features:**
+- Real-time stale detection
+- Contextual hash fingerprinting
+- Automatic refresh on pause
+- Clean resource management
+- Native IDE integration
+end note
+
+@enduml

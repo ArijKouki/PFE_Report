@@ -1,0 +1,23 @@
+@startuml Tools Overview
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title Agent Tools Overview
+
+package "Agent" {
+  [ReadFileFromWorkspace]
+  [CodeAnalysisTool]
+  [ViolationExplanationTool]
+  [CodeFixTool]
+  [Finish]
+}
+
+[ReadFileFromWorkspace] --> [CodeAnalysisTool] : file content
+[CodeAnalysisTool] --> [ViolationExplanationTool] : base violations
+[ViolationExplanationTool] --> [CodeFixTool] : explanations
+[CodeFixTool] --> [Finish] : suggested fixes
+[CodeAnalysisTool] --> [Finish] : base violations
+
+@enduml
+
+
