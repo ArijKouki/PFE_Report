@@ -29,7 +29,7 @@ guides the development process.
 Founded in 1998, Google LLC is a global leader in technology and innovation. As a subsidiary of Alphabet Inc., Google’s mission is to organize the world’s information and make it universally accessible and useful. Guided by values such as innovation, accessibility, sustainability, and user trust, Google has established itself as one of the most influential companies shaping the digital era. Its culture emphasizes collaboration, diversity, inclusion, and impact-driven engineering, enabling continuous leadership in research and product development.
 
 \begin{figure}[!ht]\centering
-\includegraphics[scale=0.07]{Images/google_logo.png}
+\includegraphics[scale=0.06]{Images/google_logo.png}
 \caption{Google Logo}
 \label{fig:google_logo}
 \end{figure}
@@ -52,7 +52,7 @@ These products reflect Google’s commitment to connecting people, improving pro
 Acquired by Google in 2006, YouTube has become the world’s leading video-sharing platform, serving more than two billion logged-in users monthly. It empowers individuals to create, share, and discover video content globally while sustaining a vibrant creator economy. From a technical perspective, YouTube integrates video processing, recommendation systems, live streaming, advertising, and trust and safety to deliver a seamless experience across devices.
 
 \begin{figure}[!ht]\centering
-\includegraphics[scale=0.07]{Images/youtube_logo.png}
+\includegraphics[scale=0.06]{Images/youtube_logo.png}
 \caption{YouTube Logo}
 \label{fig:youtube_logo}
 \end{figure}
@@ -66,49 +66,31 @@ Within YouTube’s engineering organization, the Developer Infrastructure (Dev I
 \section{Project Overview}
 
 \subsection{Project Context}
-This project was developed within the scope of my host team YoutTube Dev Infra, which focuses on supporting developers by providing tools and extensions that improve their day-to-day workflows. As part of this mission, the team is exploring how artificial intelligence can be leveraged to further assist developers. One concrete idea is to enhance their existing extension by introducing a feature that helps enforce internal best practices. The goal is to explore how large language models (LLMs) can complement traditional approaches, offering developers more intelligent and context-aware guidance directly within the IDE.
+This project was developed within the scope of a development infrastructure team dedicated to supporting developers by providing tools and extensions that enhance their daily workflows. As part of this mission, the team is exploring how artificial intelligence can be leveraged to assist developers in maintaining code quality and adhering to best practices. The goal is to investigate how large language models (LLMs) can complement traditional approaches by offering more intelligent and context-aware guidance directly within the IDE.  
 
-In addition, this project is carried out as part of the National Institute of Applied Science and Technology’s fifth-year mandatory final project, which is required to obtain the software engineering degree.
-
-\subsection{Existing Solutions}
-To support best practices and maintain code quality, teams currently rely on three main approaches:
-\begin{itemize}
-    \item \textbf{Code Reviews:} Engineers provide human feedback on design, readability, and best practices during review sessions. Recently, AI-assisted reviews have also been introduced, helping both reviewers and developers by suggesting improvements.
-    
-    \item \textbf{Presubmit Checks:} Automated checks executed before code is submitted. These ensure correctness, style consistency, and prevent simple errors.
-    
-    \item \textbf{Rule-Based Checks (Work in Progress):} Tools under development to enforce simple, objective rules such as naming conventions or syntax. These checks are intended for measurable guidelines and provide consistent, automated verification.
-\end{itemize}
-
-Together, these mechanisms form the current framework supporting developers in maintaining quality and consistency across the codebase.
+In parallel, this work also constitutes the mandatory fifth-year final project required for obtaining the software engineering degree at the National Institute of Applied Science and Technology, providing both academic and practical significance.  
 
 \subsection{Problem Statement}
-While these approaches provide valuable support, they also leave significant gaps in practice.  
-\begin{itemize}
-    \item \textbf{Delayed Feedback:} The most meaningful guidance on design and best practices typically arrives during code reviews, after development is complete. This often requires rework and slows iteration.  
-    \item \textbf{Limited Scope of Presubmit Checks:} Presubmits focus on correctness and safety rather than nuanced best practices, leaving developers without proactive guidance in those areas.  
-    \item \textbf{Surface-Level Coverage of Rule-Based Checks:} Rule-based tools can only enforce simple, objective rules. They are not able to reason about context-dependent or subjective best practices.  
-\end{itemize}
-
-As a result, developers lack timely, intelligent support during the actual coding phase, where guidance would be most efficient and impactful.  
+In large-scale software development environments, maintaining uniform adherence to \textbf{internal framework–specific guidelines} across multiple teams is crucial for ensuring code quality, consistency, and long-term maintainability. While modern development environments provide assistance for general programming practices or widely used frameworks, they lack intelligent support for the nuanced, evolving rules of internal frameworks. As a result, developers often receive feedback on internal best practices only during code reviews, after significant effort has already been invested. This delayed feedback cycle leads to inefficiencies such as rework, slower iterations, and frustration among teams who must refactor code that was previously considered complete. The absence of real-time, context-aware guidance tailored to internal frameworks leaves developers navigating complex design decisions without adequate support, leading to technical debt, inconsistent quality, and higher onboarding complexity. Addressing this gap requires solutions that proactively enforce internal framework best practices during the coding phase, providing timely and context-specific feedback directly within the IDE.  
 
 \subsection{Proposed Solution}
-This project introduces an \textbf{AI-assisted feedback system integrated directly into the coding workflow}.  
+This project introduces an \textbf{AI-assisted feedback system integrated directly into the coding workflow}. The solution is designed to address the challenges outlined above through three key capabilities:  
+
 \begin{itemize}
-    \item \textbf{Real-Time Guidance:} Provide developers with immediate, context-aware suggestions while they are writing code.  
-    \item \textbf{Framework-Specific Best Practice Enforcement:} Go beyond syntax and correctness by surfacing adherence to YouTube’s internal framework guidelines early in the development process.  
-    \item \textbf{Reduced Review Burden:} Shift part of the best practice enforcement from manual reviews to the authoring stage, making reviews faster and more focused on higher-level insights.  
+    \item \textbf{Shift-Left Feedback:} Provide developers with earlier, context-aware guidance during the coding phase, ensuring that issues are detected and addressed well before code reviews.  
+    \item \textbf{Framework-Specific Best Practice Enforcement:} Surface adherence to internal framework guidelines early in the development process, going beyond syntax and correctness.  
+    \item \textbf{Reduced Review Burden:} Shift part of the best practice enforcement from manual reviews to the authoring stage, allowing reviews to focus on higher-level insights.  
 \end{itemize}
 
-By bringing intelligent, framework-aware feedback closer to the point of coding, the solution aims to reduce back-and-forth during reviews, ensure internal consistency, and accelerate development velocity.
+By integrating intelligent, framework-aware feedback directly into the coding workflow, this solution aims to minimize rework, improve adherence to internal standards, and accelerate development velocity.  
 
 \section{Work Methodology}
 
 \subsection{Agile Development Approach}
-Agile practices were adopted to support iterative development and maintain flexibility in responding to evolving requirements. This approach allowed continuous integration of feedback from the host and co-host, ensuring that each increment of work aligned with both technical goals and the broader product vision. Testing, validation, and code reviews were incorporated throughout the process to maintain high quality, while frequent collaboration provided clarity and shared ownership of outcomes. Agile principles also complemented Google’s focus on engineering excellence, including rigorous design reviews, thorough testing, robust code reviews, and DevOps-enabled automation.
+Agile software development, as defined by Beck et al.~\cite{beck2001agile}, emphasizes "individuals and interactions over processes and tools, working software over comprehensive documentation, customer collaboration over contract negotiation, and responding to change over following a plan." This methodology was adopted to support iterative development and maintain flexibility in responding to evolving requirements. According to Martin~\cite{martin2003agile}, agile practices enable continuous integration of feedback, ensuring that each increment of work aligns with both technical goals and the broader product vision. Testing, validation, and code reviews were incorporated throughout the process to maintain high quality, while frequent collaboration provided clarity and shared ownership of outcomes. Agile principles complemented the focus on engineering excellence, including rigorous design reviews, thorough testing, robust code reviews, and DevOps-enabled automation.
 
 \subsection{Kanban Workflow}
-The dynamic workload of the YouTube Developer Infrastructure (Dev Infra) team, including feature requests, bug fixes, and maintenance tasks, was managed using a Kanban workflow. By visualizing tasks and limiting work in progress, the team could prevent bottlenecks and quickly shift focus to urgent issues when necessary. Work was structured into stages to maintain clear coordination while allowing the flexibility to adapt priorities as requirements evolved.  
+Kanban, as described by Anderson~\cite{anderson2010kanban}, is "a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members." The dynamic workload of the development infrastructure team, including feature requests, bug fixes, and maintenance tasks, was managed using this Kanban workflow. According to Kniberg and Skarin~\cite{kniberg2011kanban}, Kanban enables teams to visualize tasks and limit work in progress, preventing bottlenecks and allowing quick focus shifts to urgent issues when necessary. Work was structured into stages to maintain clear coordination while allowing the flexibility to adapt priorities as requirements evolved.  
 
 The Kanban workflow included the following stages:
 
@@ -122,35 +104,40 @@ The Kanban workflow included the following stages:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.9]{Images/kanban_workflow.jpg}
+    \includegraphics[scale=0.65]{Images/kanban_workflow.jpg}
     \caption{Kanban Workflow}
     \label{fig:kanban_workflow}
 \end{figure}
 
 
 \subsection{Development Process}
-The project followed an iterative engineering cycle designed to balance thorough planning with incremental delivery. Each stage was supported by structured practices, dedicated tools, and regular collaboration:
-
-\begin{itemize}
-    \item \textbf{Ideation and Research:} The project began with an exploration phase to clarify objectives, gather requirements, and investigate potential solution directions. This stage combined independent research with collaborative discussions to assess feasibility and align on priorities.
-    
-    \item \textbf{Design and Planning:} A detailed design document was authored to present the technical choices, architectural considerations, and proposed workflow. This document was reviewed by engineers, iteratively refined, and approved. The final work plan was then transferred to the internal task management system, enabling structured tracking and prioritization.
-    
-    \item \textbf{Implementation:} Development was performed in small, reviewable increments using Google’s internal development environment within the company-wide repository. Each change was submitted accompanied by unit tests, and validated through both manual and AI-assisted code reviews. The implementation combined Python for backend logic, RPCs for inter-service communication, and TypeScript for the frontend.
-    
-    \item \textbf{Testing and Validation:} Functionality and reliability were verified continuously. Automated unit tests ensured correctness at the component level, while integration reviews validated the behavior within the larger system.
-    
-    \item \textbf{Maintenance and Optimization:} Refactoring, bug fixes, and updates were performed throughout development, particularly as some dependencies evolved or methods became deprecated. This ensured that the solution remained consistent, maintainable, and aligned with evolving standards.
-\end{itemize}
-
-Collaboration was supported through a structured communication rhythm, combining regular syncs with the host and co-host, weekly team meetings, and occasional cross-team discussions. This cadence provided timely feedback, clear guidance, and alignment on shared dependencies.
+The project followed an iterative engineering cycle designed to balance thorough planning with incremental delivery, as illustrated in Figure~\ref{fig:development_cycle}. This cycle guided the work through structured stages, supported by dedicated tools and regular collaboration:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{Images/dev_process.png}
-    \caption{Project Development Iteration Cycle}
+    \includegraphics[scale=0.5]{Images/dev_process.png}
+    \caption{Project Development Cycle}
     \label{fig:development_cycle}
 \end{figure}
+
+The main stages, as depicted in the figure, included:
+
+\begin{itemize}
+    \item \textbf{Onboarding and Initial Tasks:} The project began with a structured onboarding phase, where familiarization with internal tools, repositories, and coding standards was combined with the resolution of assigned bugs. This phase ensured a smooth transition into the team’s workflow and provided early practical experience.
+
+    \item \textbf{Ideation and Research:} Following onboarding, the project entered an exploration phase to clarify objectives, gather requirements, and investigate potential solution directions. Independent research was complemented by collaborative discussions to assess feasibility and align priorities.
+
+    \item \textbf{Design and Planning:} A detailed design document was authored to present technical choices, architectural considerations, and the proposed workflow. The document underwent iterative review by engineers, and the final approved plan was transferred to the internal task management system for structured tracking and prioritization.
+
+    \item \textbf{Implementation:} Development was performed in small, reviewable increments using the internal development environment within the company-wide repository. Each change was submitted with unit tests and validated through manual and AI-assisted code reviews.
+
+    \item \textbf{Testing and Validation:} Functionality and reliability were verified continuously. Automated unit tests ensured correctness at the component level, while integration reviews and structured evaluations validated the behavior within the larger system.
+
+    \item \textbf{Maintenance and Optimization:} Refactoring, bug fixes, and updates were performed throughout development, particularly as dependencies evolved or methods became deprecated. This ensured that the solution remained consistent, maintainable, and aligned with evolving standards.
+\end{itemize}
+
+Collaboration was supported through a structured communication rhythm, combining regular syncs with the host and co-host, weekly team meetings, and occasional cross-team discussions. This cadence provided timely feedback, clear guidance, and alignment on shared dependencies throughout the iterative cycle.
+
 
 \subsection{Project Timeline}
 The project spanned four months (May 5 – September 5, 2025). Work was scheduled based on business priorities and technical dependencies. Early weeks focused on research and design, followed by implementation, testing, and iterative refinement.

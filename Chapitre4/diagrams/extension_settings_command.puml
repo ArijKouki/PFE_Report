@@ -1,0 +1,46 @@
+@startuml extension_settings_command
+!theme plain
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+
+package "VS Code Extension Settings" {
+    component "User Settings" as settings {
+        [Enable Agent Analysis]
+        [Debounce Delay (ms)]
+        [Max Suggestions per File]
+        [Analysis Trigger Mode]
+    }
+}
+
+package "Command Palette" {
+    component "Commands" as commands {
+        [Analyze Current File]
+        [Analyze Workspace]
+        [Toggle Agent Analysis]
+    }
+}
+
+package "Extension Configuration" {
+    component "Settings Provider" as provider
+    component "Command Registration" as registration
+}
+
+settings --> provider : "Read Configuration"
+provider --> registration : "Apply Settings"
+registration --> commands : "Register Commands"
+
+note right of settings
+  Settings control:
+  - Feature enable/disable
+  - Performance tuning
+  - Analysis behavior
+end note
+
+note right of commands
+  Commands available in:
+  - Command Palette (Ctrl+Shift+P)
+  - Context menus
+  - Title bar actions
+end note
+
+@enduml

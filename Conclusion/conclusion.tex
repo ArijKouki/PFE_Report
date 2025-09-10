@@ -12,15 +12,17 @@
 \begin{spacing}{1.2}
 %==============================================================================
 
-C'est l'une des parties les plus importantes et pourtant les plus négligées 
-du rapport. Ce qu'on \underline{ne veut pas voir} ici, c'est combien ce stage vous a été bénéfique, comment il vous a appris à vous intégrer, à connaître le monde du travail, etc.\\
-Franchement, personne n'en a rien à faire, du moins dans cette partie. Pour cela, vous 
-avez les remerciements et les dédicaces, vous pourrez vous y exprimer à souhait.\\
-La conclusion, c'est très simple : c'est d'abord le résumé de ce que vous avez raconté
-dans le rapport : vous reprenez votre contribution, en y ajoutant ici les outils que vous 
-avez utilisé, votre manière de procéder. Vous pouvez même mettre les difficultés
-rencontrées. En deuxième lieu, on y met les perspectives du travail : ce qu'on pourrait 
-ajouter à votre application, comment on pourrait l'améliorer.
+This graduation project has successfully developed and implemented an intelligent assistance system integrated into YouTube's internal development environment, aimed at enforcing internal framework-specific best practices in real-time. The system addresses a major challenge in large-scale development environments: the lack of real-time feedback on internal framework-specific best practices. While existing tools focus on general syntax or public frameworks, our solution provides contextual and intelligent assistance directly within the developer's workflow, reducing technical debt and improving code consistency.
+
+The main contribution consists of integrating an AI agent based on Large Language Models (LLMs) into the YouTube development environment. The system comprises an executable AI agent using the "Executable Agent" architecture that orchestrates five specialized tools for code analysis, violation explanation, and fix generation, a YouTube IDE extension that provides an intuitive user interface with multiple entry points, and a sophisticated two-tier state management system for handling stale diagnostics, balancing immediate responsiveness with analysis precision.
+
+Development was carried out using a modern technology stack including Python for the AI agent implementation, the YouTube DevInfra Agent Framework for infrastructure, Google's internal AI platform for LLM models, TypeScript for the IDE extension, and VS Code Extension API for integration. The project followed an agile approach with a Kanban workflow, structured in clear phases from onboarding through implementation, testing, and optimization.
+
+Several significant technical challenges were overcome during the project. Stale state management required a sophisticated two-tier system with instant adjustment for responsiveness and debounced re-anchoring for precision. Performance optimization involved evaluating three different agent architectures, resulting in the choice of a parallel agent with concurrency limiting for optimal performance and stability. AI quality evaluation was complex due to LLM output variability, leading to the development of the "LLM-as-a-Judge" solution for robust semantic evaluation.
+
+The primary future focus is implementing a Tiered Analysis Approach to make the tool faster and more efficient. Currently, our agent uses its powerful LLM brain for everything, which is excellent for complex problems but overkill for simple issues. The vision is to add a super-fast linter that acts as a first pass, instantly catching easy, clear-cut issues, while only complex, subjective problems would be passed to the LLM agent. This approach provides the best of both worlds: instant speed for easy wins and deep intelligence for hard cases, resulting in a faster, cheaper, and better developer experience. The technical groundwork is already in place, as a temmate is currently building the super-fast, rule-based linter, and we have established a clear integration plan.
+
+This project has demonstrated the feasibility and effectiveness of integrating AI agents into development environments for enforcing internal framework-specific best practices. The solution addresses a real need in the YouTube development ecosystem and provides a solid foundation for future developments, positioning this work as an important contribution to improving development tools and adopting AI in software development processes.
 
 %==============================================================================
 \end{spacing}

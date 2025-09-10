@@ -1,0 +1,63 @@
+@startuml extension_sequence_chain
+!theme plain
+skinparam backgroundColor white
+
+participant "VS Code Extension" as Ext
+participant "AgentClient" as AC
+participant "IDE Service" as IDE
+participant "YT Agent Framework" as YT
+participant "LLM Best Practices Agent" as Agent
+
+== User Triggers Analysis ==
+
+Ext -> AC: analyzeFile(fileUri, content)
+note right: User action or command
+
+AC -> AC: Validate request
+AC -> AC: Apply retry/timeout config
+
+AC -> IDE: sendAnalysisRequest(payload)
+note right: RPC call with auth headers
+
+IDE -> IDE: Attach user identity
+IDE -> IDE: Apply rate limits
+IDE -> IDE: Validate permissions
+
+IDE -> YT: forwardRequest(authContext, payload)
+note right: Forward to agent framework
+
+YT -> YT: Route to agent instance
+YT -> YT: Apply framework policies
+
+YT -> Agent: processRequest(fileContent, conventions)
+note right: Agent analysis
+
+Agent -> Agent: ReadFileFromWorkspaceTool
+Agent -> Agent: CodeAnalysisTool
+Agent -> Agent: ViolationExplanationTool
+Agent -> Agent: CodeFixTool
+
+Agent -> YT: returnAnalysisResults(violations, fixes)
+YT -> IDE: returnResults(results)
+IDE -> AC: returnResponse(response)
+
+AC -> AC: Parse typed interfaces
+AC -> Ext: updateDiagnostics(violations)
+AC -> Ext: updateHovers(fixes)
+
+== Error Handling ==
+
+alt Backend Unavailable
+    Agent -> YT: timeout/error
+    YT -> IDE: errorResponse
+    IDE -> AC: errorResponse
+    AC -> Ext: showErrorNotification()
+end
+
+alt Retry Logic
+    AC -> AC: exponential backoff
+    AC -> IDE: retryRequest()
+    note right: Up to max attempts
+end
+
+@enduml

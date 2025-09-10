@@ -2,62 +2,46 @@
 !theme plain
 skinparam backgroundColor #FFFFFF
 
-title YouTube IDE Extension User Interface Flow
-
 start
 
 :Developer opens file in IDE;
 
-if (Entry Point Choice?) then (Editor Action)
-    :Click lightbulb icon\nin editor title bar;
-else (Command Palette)
-    :Use "Analyze File with AI"\ncommand;
+if (Entry Point Choice?) then (Visual Interface)
+    :Trigger analysis through\nvisual indicators;
+else (Command-Based Access)
+    :Trigger analysis through\ncommand interface;
 endif
 
 :YouTube IDE Extension\ninitiates analysis;
 
-:Show progress notification\n"Analyzing file...";
+:Show progress feedback\nduring AI processing;
 
 :LLM Best Practices Agent\nprocesses file;
 
 :Agent returns analysis results;
 
-:Display violations as\nnative IDE diagnostics\nwith explanations;
+:Display violations using\nfamiliar interface patterns\nwith explanations;
 
-if (Developer hovers over diagnostic?) then (Yes)
-    :Show diagnostic message\nwith explanation;
-    :Show formatted code fix\nin hover provider;
+if (Developer interacts with\nviolation markers?) then (Yes)
+    :Show violation explanation;
+    :Show contextual code fix\nsuggestions;
     
-    if (Developer wants to apply fix?) then (Yes)
-        if (Fix application method?) then (Copy fix)
-            :Developer copies\nsuggested fix;
-        else (Quick Fix)
-            :Developer uses Quick Fix\n(calls coding assistant);
-        endif
-        :Fix applied to code;
+    if (Developer chooses to\napply fix?) then (Yes)
+        :Apply suggested fix\nto code;
     else (No)
-        :Developer continues\nwithout applying fix;
+        :Continue without\napplying fix;
     endif
-else (No interaction)
-    :Diagnostics remain visible\nin IDE;
+else (No)
+    :Violations remain visible\nin interface;
 endif
 
 if (Developer continues working?) then (Yes)
-    :Diagnostics remain current\nand available;
-    :Two-tiered system manages\nstale detection automatically;
+    :System manages stale state\nautomatically;
 else (No)
     :Developer closes file;
 endif
 
 stop
 
-note right
-**Key Features:**
-- Multiple entry points
-- Native IDE integration
-- Real-time progress feedback
-- Diagnostic explanations + formatted fixes
-- Automatic stale management
-end note
 
 @enduml

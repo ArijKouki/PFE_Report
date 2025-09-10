@@ -1,0 +1,19 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+
+rectangle "Onboarding & Initial Tasks" as Onboarding
+rectangle "Ideation & Research" as Ideation
+rectangle "Design & Planning" as Design
+rectangle "Implementation" as Implementation
+rectangle "Testing & Validation" as Testing
+rectangle "Maintenance & Optimization" as Maintenance
+
+Onboarding --> Ideation
+Ideation --> Design
+Design --> Implementation
+Implementation --> Testing
+Testing --> Maintenance
+Maintenance --> Ideation : Iterative Cycle
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml extension_init_flow
+!theme plain
+skinparam backgroundColor white
+skinparam activityStyle rectangle
+
+start
+
+:Extension Activation;
+note right: VS Code calls activate()
+
+:Read User Settings;
+note right: Load configuration from workspace/user settings
+
+:Register Commands;
+note right: Register command palette entries
+
+:Create AgentClient;
+note right: Initialize RPC client with retries/timeouts
+
+:Create DiagnosticManager;
+note right: Initialize diagnostic store and stale handling
+
+:Create Controller;
+note right: Wire UI state management
+
+:Health Probe;
+note right: Test backend connectivity
+
+if (Backend Reachable?) then (yes)
+    :Mark as Ready;
+    :Show Success Notification;
+else (no)
+    :Mark as Error State;
+    :Show Error Notification;
+endif
+
+:Settings Change Detected?;
+note right: User modifies settings
+
+if (Settings Changed?) then (yes)
+    :Reload Configuration;
+    :Update Debounce Settings;
+    :Re-register Commands;
+    note right: Idempotent re-initialization
+else (no)
+    :Continue Normal Operation;
+endif
+
+stop
+
+@enduml

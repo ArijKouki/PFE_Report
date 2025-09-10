@@ -1,0 +1,153 @@
+@startuml Class Diagram
+!theme plain
+skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+
+title System Class Diagram - Executable Agent Architecture
+
+package "IDE Extension Layer" {
+  class YouTubeIDEExtension {
+    -controller: UIController
+    -agentClient: AgentClient
+    -settings: UserSettings
+    +initialize(): void
+    +handleAnalysisRequest(): void
+    +displayResults(): void
+  }
+  
+  class UIController {
+    -editorAction: EditorAction
+    -commandPalette: CommandPalette
+    -diagnosticManager: DiagnosticManager
+    -notificationManager: NotificationManager
+    +triggerAnalysis(): void
+    +updateUI(): void
+    +handleStaleDiagnostics(): void
+  }
+  
+  class AgentClient {
+    -ideService: IDEService
+    +sendAnalysisRequest(): AnalysisResponse
+    +handleResponse(): void
+  }
+  
+  class DiagnosticManager {
+    -diagnostics: List<Diagnostic>
+    -staleHandler: StaleDiagnosticsHandler
+    +displayDiagnostics(): void
+    +markStale(): void
+    +reanchorDiagnostics(): void
+  }
+}
+
+package "AI Agent Framework Layer" {
+  class LLMBestPracticesAgent {
+    -tools: List<AgentTool>
+    -orchestrator: WorkflowOrchestrator
+    -conventionManager: ConventionManager
+    +executeAnalysis(): AnalysisResponse
+    +coordinateTools(): void
+  }
+  
+  class WorkflowOrchestrator {
+    -executionFlow: ExecutionFlow
+    +orchestrateTools(): void
+    +handleErrors(): void
+  }
+  
+  abstract class AgentTool {
+    +execute(): ToolResult
+    +validateInput(): boolean
+  }
+  
+  class FileReadingTool {
+    +readFile(): FileContent
+    +validateFile(): boolean
+  }
+  
+  class CodeAnalysisTool {
+    +analyzeCode(): List<Violation>
+    +detectViolations(): void
+  }
+  
+  class ViolationExplanationTool {
+    +generateExplanation(): Explanation
+    +formatExplanation(): string
+  }
+  
+  class CodeFixTool {
+    +generateFix(): CodeFix
+    +validateFix(): boolean
+  }
+  
+  class ResultConsolidationTool {
+    +consolidateResults(): AnalysisResponse
+    +formatResponse(): string
+  }
+  
+  class ConventionManager {
+    -conventions: List<Convention>
+    +loadConventions(): void
+    +getRelevantConventions(): List<Convention>
+  }
+}
+
+package "Data Models" {
+  class AnalysisRequest {
+    -filePath: string
+    -timestamp: DateTime
+  }
+  
+  class AnalysisResponse {
+    -status: Status
+    -violations: List<Violation>
+    -metadata: Metadata
+  }
+  
+  class Violation {
+    -type: ViolationType
+    -location: CodeLocation
+    -explanation: Explanation
+    -fix: CodeFix
+  }
+  
+  class Convention {
+    -id: string
+    -description: string
+    -severity: Severity
+    -examples: List<Example>
+  }
+}
+
+' Relationships
+YouTubeIDEExtension --> UIController : contains
+YouTubeIDEExtension --> AgentClient : contains
+UIController --> DiagnosticManager : manages
+AgentClient --> LLMBestPracticesAgent : communicates with
+
+LLMBestPracticesAgent --> WorkflowOrchestrator : uses
+LLMBestPracticesAgent --> ConventionManager : uses
+WorkflowOrchestrator --> AgentTool : orchestrates
+
+AgentTool <|-- FileReadingTool : implements
+AgentTool <|-- CodeAnalysisTool : implements
+AgentTool <|-- ViolationExplanationTool : implements
+AgentTool <|-- CodeFixTool : implements
+AgentTool <|-- ResultConsolidationTool : implements
+
+LLMBestPracticesAgent --> AnalysisRequest : processes
+LLMBestPracticesAgent --> AnalysisResponse : generates
+ConventionManager --> Convention : manages
+AnalysisResponse --> Violation : contains
+
+note top of LLMBestPracticesAgent
+  Main orchestrator following
+  Executable Agent pattern
+end note
+
+note top of UIController
+  Handles user interface
+  and stale diagnostics
+end note
+
+@enduml

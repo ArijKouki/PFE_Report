@@ -1,0 +1,61 @@
+@startuml ExtensionComponents
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+title Extension Internal Component Architecture
+
+package "IDE Extension" {
+    rectangle "Init Component" as Init {
+        note right : Handles extension initialization,\nreading user settings,\nregistering commands and editor actions,\nperforming health checks
+    }
+    
+    rectangle "Controller" as Controller {
+        note right : Centralizes all UI-related state,\nprocesses commands,\nmanages notifications,\nroutes analysis results,\nrenders diagnostics and hover-based suggestions,\ncoordinates stale-state transitions
+    }
+    
+    rectangle "AgentClient" as AgentClient {
+        note right : Manages communication with backend,\nhandles request formatting,\nimplements retry logic,\nmanages timeouts,\nprocesses responses
+    }
+}
+
+package "VS Code API" {
+    rectangle "Commands" as Commands
+    rectangle "Editor Actions" as EditorActions
+    rectangle "Notifications" as Notifications
+    rectangle "Diagnostics" as Diagnostics
+    rectangle "Hover Providers" as HoverProviders
+}
+
+package "Proxy Layer" {
+    rectangle "IDE Service" as IDEService
+}
+
+package "Backend" {
+    rectangle "Agent Service" as AgentService
+}
+
+' Initialization flow
+Init --> Controller : Initializes components
+Init --> AgentClient : Sets up communication
+
+' User interaction flow
+Commands --> Controller : User triggers analysis
+EditorActions --> Controller : User triggers analysis
+
+' Controller orchestrates the flow
+Controller --> AgentClient : ExecuteCommand()
+Controller --> Notifications : Progress updates
+Controller --> Diagnostics : Render violations
+Controller --> HoverProviders : Show fix suggestions
+
+' Communication flow
+AgentClient --> IDEService : SendRequest()
+IDEService --> AgentService : ForwardRequest()
+AgentService --> IDEService : Response
+IDEService --> AgentClient : Response
+AgentClient --> Controller : Analysis results
+
+' State management
+Controller --> Controller : Manages stale-state transitions
+
+@enduml

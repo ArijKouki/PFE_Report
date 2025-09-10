@@ -1,0 +1,28 @@
+@startuml HighLevelFrontend
+!theme plain
+skinparam backgroundColor #FFFFFF
+
+
+rectangle "IDE Extension" as IDE {
+  rectangle "Controller" as Controller
+  rectangle "Agent Client" as AgentClient
+  rectangle "Init" as Init
+}
+
+rectangle "Proxy" {
+  rectangle "IDE Service" as IDEService
+}
+
+rectangle "Backend" {
+  rectangle "Agent Service" as AgentService
+}
+
+Init --> Controller : Startup initialization
+Controller --> AgentClient : ExecuteCommand()
+AgentClient --> IDEService : SendRequest()
+IDEService --> AgentService : ForwardRequest()
+AgentService --> IDEService : Response
+IDEService --> AgentClient : Response
+AgentClient --> Controller : Results
+
+@enduml

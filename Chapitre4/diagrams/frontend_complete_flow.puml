@@ -1,0 +1,172 @@
+@startuml frontend_complete_flow
+!theme plain
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+
+package "VS Code Extension" {
+    component "Initialization Module" as Init {
+        [Read Settings]
+        [Register Commands]
+        [Create Components]
+        [Health Probe]
+    }
+    
+    component "User Settings" as Settings {
+        [Enable Analysis]
+        [Debounce Delay]
+        [Max Suggestions]
+    }
+    
+    component "Command Registration" as CmdReg {
+        [Command Palette Entry]
+        [Editor Action]
+        [Title Bar Action]
+    }
+    
+    component "Controller" as Controller {
+        [Command Handler]
+        [Progress Notifications]
+        [Diagnostic Management]
+        [Stale State Machine]
+    }
+    
+    component "AgentClient" as AgentClient {
+        [RPC Client]
+        [Retry Logic]
+        [Timeout Handling]
+        [Type Casting]
+    }
+    
+    component "DiagnosticManager" as DiagMgr {
+        [Diagnostic Store]
+        [Stale Detection]
+        [Hash Computation]
+        [Re-anchoring]
+    }
+    
+    component "UI Elements" as UI {
+        [Code Editor]
+        [Diagnostics Panel]
+        [Notification Messages]
+        [Hover Provider]
+    }
+}
+
+package "External Services" {
+    component "IDE Service" as IDEService {
+        [Authorization]
+        [Rate Limiting]
+        [Request Forwarding]
+    }
+    
+    component "YT Agent Framework" as YTService {
+        [Agent Routing]
+        [Framework Policies]
+    }
+    
+    component "LLM Best Practices Agent" as Agent {
+        [File Analysis]
+        [Violation Detection]
+        [Fix Generation]
+    }
+}
+
+package "Type System" {
+    component "Response Interfaces" as Types {
+        [AnalysisResponse]
+        [ViolationResult]
+        [FixSuggestion]
+        [ErrorResponse]
+    }
+}
+
+' Initialization Flow
+Init --> Settings : "Read Configuration"
+Init --> CmdReg : "Register Commands"
+Init --> Controller : "Create Controller"
+Init --> AgentClient : "Create AgentClient"
+Init --> DiagMgr : "Create DiagnosticManager"
+
+' User Interaction Flows
+note top of CmdReg : "User triggers analysis"
+
+CmdReg --> Controller : "executeCommand()"
+note right : "Command Palette or Editor Action"
+
+Controller --> Controller : "Show Progress Notification"
+Controller --> AgentClient : "analyzeFile(uri, content)"
+
+AgentClient --> AgentClient : "Apply Retry/Timeout Config"
+AgentClient --> IDEService : "sendAnalysisRequest(payload)"
+
+IDEService --> IDEService : "Attach Auth Context"
+IDEService --> YTService : "forwardRequest(authContext, payload)"
+
+YTService --> Agent : "processRequest(fileContent)"
+
+Agent --> Agent : "Run Analysis Tools"
+Agent --> YTService : "returnAnalysisResults(violations, fixes)"
+
+YTService --> IDEService : "returnResults(results)"
+IDEService --> AgentClient : "returnResponse(response)"
+
+AgentClient --> AgentClient : "Cast to Typed Interfaces"
+AgentClient --> Controller : "returnTypedResults(results)"
+
+Controller --> Controller : "Hide Progress Notification"
+Controller --> DiagMgr : "updateDiagnostics(violations)"
+Controller --> UI : "Show Diagnostics in Editor"
+Controller --> UI : "Update Diagnostics Panel"
+Controller --> UI : "Enable Hover Provider"
+
+' Stale Diagnostics Management
+DiagMgr --> DiagMgr : "Detect File Changes"
+DiagMgr --> DiagMgr : "Compute Context Hash"
+DiagMgr --> DiagMgr : "Mark as [Outdated]"
+DiagMgr --> DiagMgr : "Apply Regex Re-anchoring"
+
+DiagMgr --> Controller : "Trigger Re-analysis"
+Controller --> AgentClient : "analyzeFile(updatedContent)"
+note right : "Debounced re-analysis"
+
+' Error Handling Flows
+AgentClient --> Controller : "errorResponse"
+note right : "Backend Error Path"
+Controller --> UI : "Show Error Notification"
+
+AgentClient --> AgentClient : "Exponential Backoff"
+note right : "Timeout/Retry Path"
+AgentClient --> IDEService : "retryRequest()"
+
+' Type System Integration
+Types --> AgentClient : "Validate Response Structure"
+Types --> Controller : "Ensure Type Safety"
+Types --> DiagMgr : "Format Diagnostic Data"
+
+note bottom of Controller
+  Controller Responsibilities:
+  - Orchestrate UI state
+  - Manage progress notifications
+  - Handle command execution
+  - Route results to UI components
+  - Manage stale diagnostics lifecycle
+end note
+
+note bottom of AgentClient
+  AgentClient Features:
+  - RPC communication
+  - Retry with exponential backoff
+  - Timeout handling
+  - Response type casting
+  - Error mapping
+end note
+
+note bottom of DiagMgr
+  Stale Diagnostics Method:
+  - Hash-based change detection
+  - Regex re-anchoring
+  - Debounced re-analysis
+  - Two-tiered stale handling
+end note
+
+@enduml

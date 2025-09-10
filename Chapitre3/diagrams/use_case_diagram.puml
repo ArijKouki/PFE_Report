@@ -1,0 +1,30 @@
+@startuml UseCaseDiagram
+!theme plain
+skinparam backgroundColor white
+skinparam actorStyle awesome
+
+actor "YouTube Developer" as Dev
+
+rectangle "LLM Best Practices Enforcement System" {
+  
+  usecase "Request Code Analysis" as UC1
+  note left of UC1
+    Precondition: The developer has enabled
+    a setting in the extension.
+    Analysis is performed by the internal AI agent.
+  end note
+  
+  usecase "Review Violations & Explanations" as UC2
+  usecase "Apply Suggested Fixes" as UC3
+}
+
+' Primary actor relationships
+Dev --> UC1 : triggers
+Dev --> UC2 : reviews
+Dev --> UC3 : applies
+
+' Relationships between use cases
+UC1 ..> UC2 : includes
+UC2 ..> UC3 : extends
+
+@enduml
