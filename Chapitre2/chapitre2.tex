@@ -1,6 +1,7 @@
 
 \setcounter{chapter}{1}
-\chapter{Business Understanding and State of the Art}
+\chapter{Business understanding and project requirements}
+\label{ch:business_understanding}
 \minitoc %insert la minitoc
 \graphicspath{{Chapitre2/figures/}}
 
@@ -20,363 +21,288 @@
 %==============================================================================
 
 \section*{Introduction}
-This chapter establishes the theoretical and contextual foundation of the project. It begins with an overview of the Software Development Life Cycle (SDLC) and the emerging role of AI technologies such as Large Language Models (LLMs), Generative AI, and AI agents in modern software engineering. It then presents the state of the art, reviewing existing solutions that support code quality and best practices. Finally, it defines the project requirements, both functional and non-functional, showing how this work addresses gaps by integrating AI-driven assistance into key SDLC phases.
+This chapter establishes the theoretical and contextual foundation of the project. It begins with an overview of AI technologies such as Large Language Models (LLMs), Generative AI, and AI agents, highlighting their relevance to modern software engineering. Next, it presents the state of the art by reviewing existing solutions for code quality and best practices. Finally, it defines the project requirements, showing how this work addresses gaps by integrating AI-driven assistance into key development phases.
 
-\section{Business and Reasoning}
+\section{Foundations and Motivation}
 
-\subsection{Software Development Life Cycle (SDLC)}
-The Software Development Life Cycle (SDLC) provides a structured framework for planning, creating, testing, deploying, and maintaining software systems. As development teams grow and projects become more complex, maintaining code quality and consistency across all phases becomes increasingly challenging. As shown in Figure~\ref{fig:sdlc_cycle}, each phase presents unique challenges that can impact developer productivity and software reliability.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.65]{Images/sdlc_stages.jpg}
-    \caption{Software Development Life Cycle Overview}
-    \label{fig:sdlc_cycle}
-\end{figure}
-
-\subsubsection*{Key Development Challenges}
-Modern software development faces several critical challenges:
-
-\begin{itemize}
-    \item \textbf{Scalability Issues:} Maintaining consistent coding standards and best practices becomes increasingly difficult as teams grow, particularly without automated assistance.
-    
-    \item \textbf{Quality Assurance Gaps:} Traditional QA relies heavily on human review, introducing delays and inconsistent feedback timing.
-    
-    \item \textbf{Technical Debt Accumulation:} Without timely guidance, developers may adopt patterns that violate best practices, leading to accumulating technical debt.
-    
-    \item \textbf{Knowledge Transfer Challenges:} New team members often learn framework-specific conventions and best practices through trial and error, slowing onboarding and introducing variability.
-\end{itemize}
-
-\subsubsection*{Modern Development Approaches}
-Contemporary practices aim to mitigate these challenges:
-
-\begin{itemize}
-    \item \textbf{Agile Methodologies:} Emphasize iterative development, continuous feedback, and rapid adaptation to changing requirements.
-    
-    \item \textbf{DevOps Integration:} Combines development and operations practices to enable continuous integration, automated testing, and real-time monitoring.
-    
-    \item \textbf{AI-Enhanced Development:} Emerging AI technologies provide intelligent assistance throughout the development process, from code generation to quality assurance.
-\end{itemize}
-
-These approaches lay the foundation for understanding how AI can address persistent challenges in code quality and consistency across modern software teams.
-
-\subsection{Artificial Intelligence in Software Development}
-
-\subsubsection*{Foundational AI Concepts}
-Artificial Intelligence (AI) refers to computational systems capable of performing tasks that typically require human intelligence, such as reasoning, learning, problem-solving, and decision-making. AI encompasses a broad spectrum of techniques and paradigms with distinct capabilities and applications. Figure~\ref{fig:ai_hierarchy} provides a visual hierarchy of AI technologies.
+\subsection{Foundational AI Concepts}
+Artificial Intelligence (AI) refers to computational systems capable of performing tasks that typically require human intelligence, including reasoning, learning, problem-solving, and decision-making~\cite{ai2024definition}. AI encompasses a wide range of techniques with distinct capabilities and applications. Figure~\ref{fig:ai_hierarchy} illustrates a hierarchy of AI technologies.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.6]{Images/AI.png}
-    \caption{Hierarchy of AI Technologies}
-    \label{fig:ai_hierarchy}
+\centering
+\includegraphics[scale=0.6]{Images/AI.png}
+\caption{Hierarchy of AI Technologies}
+\label{fig:ai_hierarchy}
 \end{figure}
 
 Key categories include:
 
 \begin{itemize}
-    \item \textbf{Symbolic AI:} Rule-based systems for reasoning and knowledge representation.
-    \item \textbf{Machine Learning (ML):} Algorithms that learn from data to improve task performance.
-    \item \textbf{Deep Learning (DL):} Neural networks with multiple layers capable of modeling complex patterns.
-    \item \textbf{Generative AI:} Systems that produce new content, such as text or code, by learning patterns from existing datasets.
+\item \textbf{Symbolic AI:} Rule-based reasoning and knowledge representation systems.
+\item \textbf{Machine Learning (ML):} Algorithms that learn from data to improve task performance~\cite{ml2024definition}.
+\item \textbf{Deep Learning (DL):} Neural networks with multiple layers capable of modeling complex patterns~\cite{dl2024definition}.
+\item \textbf{Generative AI:} Systems that produce new content, such as text or code, by learning patterns from existing datasets~\cite{generative_ai2024}.
 \end{itemize}
 
-\subsubsection*{The AI Revolution in Software Engineering}
-As software development becomes increasingly complex, traditional approaches struggle to maintain quality while meeting delivery deadlines. AI technologies offer transformative opportunities by embedding intelligent assistance directly into the development workflow.
-
-Industry adoption illustrates this impact: surveys indicate that AI-generated code accounts for a significant portion of development output in major tech organizations~\cite{google2024ai_code, google2024developer_survey}. AI integration addresses critical business challenges, including maintaining code quality, reducing technical debt, and scaling development practices across growing teams. This shift defines the AI-Enhanced SDLC, a lifecycle where intelligent assistance is embedded throughout all phases.
-
-\subsubsection*{Large Language Models (LLMs)}
-LLMs represent a breakthrough in generative AI, trained on extensive natural language and code corpora. Unlike traditional tools, they understand context, semantics, and intent, enabling complex reasoning across domains. Figure~\ref{fig:llm_overview} shows a chronological overview of LLM development from 2018–2024.
+\subsubsection{Large Language Models (LLMs)}
+LLMs represent a breakthrough in generative AI, trained on extensive natural language and code corpora~\cite{llm2024breakthrough}. Unlike traditional tools, LLMs understand context, semantics, and intent, enabling complex reasoning across domains. Figure~\ref{fig:llm_overview} provides a chronological overview of LLM development from 2018–2024.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{Images/A-chronological-overview-of-large-language-models-LLMs-multimodal-and-scientific.png}
-    \caption{Chronological Overview of Large Language Models (LLMs)}
-    \label{fig:llm_overview}
+\centering
+\includegraphics[scale=1]{Images/A-chronological-overview-of-large-language-models-LLMs-multimodal-and-scientific.png}
+\caption{Chronological Overview of Large Language Models (LLMs)}
+\label{fig:llm_overview}
 \end{figure}
 
 LLM capabilities include:
 
 \begin{itemize}
-    \item \textbf{Natural Language Understanding}
-    \item \textbf{Pattern Recognition}
-    \item \textbf{Content Generation}
-    \item \textbf{Reasoning and Inference}
+\item \textbf{Natural Language Understanding}
+\item \textbf{Pattern Recognition}
+\item \textbf{Content Generation}
+\item \textbf{Reasoning and Inference}
 \end{itemize}
 
-Applied to software development, these translate into:
+In software development, these capabilities translate into:
 
 \begin{itemize}
-    \item \textbf{Contextual Code Analysis}
-    \item \textbf{Intelligent Code Generation}
-    \item \textbf{Explanatory Documentation}
-    \item \textbf{Semantic Standards Enforcement}
+\item \textbf{Contextual Code Analysis}
+\item \textbf{Intelligent Code Generation}
+\item \textbf{Explanatory Documentation}
+\item \textbf{Semantic Standards Enforcement}
 \end{itemize}
 
-\subsubsection*{AI Agents}
-AI agents build on LLMs by autonomously reasoning, planning, and executing development tasks. They orchestrate LLM capabilities within workflows, providing seamless integration into IDEs, testing frameworks, and version control systems. Figure~\ref{fig:ai_agent_workflow} illustrates the agent architecture and orchestration workflow.
+\subsubsection{AI Agents}
+AI agents build on LLMs by autonomously reasoning, planning, and executing development tasks. They orchestrate LLM capabilities within workflows, providing seamless integration into IDEs, testing frameworks, and version control systems. Figure~\ref{fig:ai_agent_workflow} illustrates a typical AI agent architecture and orchestration workflow.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.2]{Images/ai_agent.png}
-    \caption{AI Agent Architecture and Orchestration Workflow}
-    \label{fig:ai_agent_workflow}
+\centering
+\includegraphics[scale=0.2]{Images/ai_agent.png}
+\caption{AI Agent Architecture and Orchestration Workflow}
+\label{fig:ai_agent_workflow}
 \end{figure}
 
 Core components include:
 
 \begin{itemize}
-    \item Code Analysis Engine
-    \item Contextual Reasoning
-    \item Development Tool Integration
-    \item Contextual Adaptation via system prompts
-    \item Feedback and Explanation System
+\item Code Analysis Engine
+\item Contextual Reasoning
+\item Development Tool Integration
+\item Contextual Adaptation via system prompts
+\item Feedback and Explanation System
 \end{itemize}
 
-\subsubsection*{Balancing AI Capabilities and Practical Considerations}
-\textbf{Capabilities:}
-\begin{itemize}
-    \item Contextual Understanding
-    \item Automated Analysis
-    \item Intelligent Recommendations
-    \item Project-specific Adaptation
-\end{itemize}
+\paragraph{Balancing AI Capabilities and Practical Considerations}
+While LLM-powered systems provide strong \textit{capabilities}—contextual understanding, automated analysis, and project-specific adaptation—they also present \textit{practical constraints}, including computational cost, context window limits, accuracy variability, and integration complexity. The system design explicitly navigates these trade-offs to deliver reliable, low-latency guidance directly inside the IDE.
 
-\textbf{Limitations:}
-\begin{itemize}
-    \item Computational Cost
-    \item Context Constraints
-    \item Accuracy Considerations
-    \item Integration Complexity
-    \item Adaptation via prompts rather than continuous learning
-\end{itemize}
+\subsection{The AI Revolution in Software Engineering}
+Modern software development faces increasing complexity. Traditional practices often struggle to maintain code quality while meeting deadlines. AI technologies offer transformative opportunities by embedding intelligent assistance directly into the development workflow.
 
-\subsubsection*{AI-Enhanced SDLC}
-The combination of LLMs and AI agents enables proactive, intelligent assistance throughout the entire software development lifecycle. This AI-enhanced SDLC transforms traditional development practices by embedding guidance, analysis, and automated support at each phase.
+Industry adoption highlights this impact: surveys show AI-generated code accounts for a growing portion of development output in major organizations~\cite{google2024ai_code, google2024developer_survey}. AI integration addresses critical challenges such as maintaining code quality, reducing technical debt, and scaling development practices across teams.
 
-\paragraph{Transformative Impact on Development Practices}
-\begin{itemize}
-    \item \textbf{From Reactive to Proactive:} Traditional workflows provide feedback mainly during code reviews or testing phases. AI-enhanced systems deliver guidance during coding, design, and planning, preventing issues before they become embedded in the codebase and reducing the need for extensive refactoring.
-    
-    \item \textbf{From Inconsistent to Scalable:} Human-based quality assurance can vary in expertise and availability. AI agents provide consistent, expert-level analysis across large teams and codebases, ensuring uniform adherence to best practices and internal framework conventions.
-    
-    \item \textbf{From Static to Adaptive:} Unlike rule-based tools, AI adapts to project-specific patterns, team preferences, and evolving best practices, offering context-aware suggestions tailored to the particular codebase.
-    
-    \item \textbf{From Isolated to Integrated:} Instead of treating quality assurance and guidance as separate phases, AI agents integrate intelligent support directly into developer workflows, bridging planning, implementation, testing, and maintenance.
-\end{itemize}
+\subsubsection{AI-Enhanced SDLC}
+The AI-enhanced Software Development Life Cycle (SDLC) embeds intelligent assistance throughout all phases, directly influencing planning, design, coding, testing, and deployment.
 
-\paragraph{AI Applications Across the SDLC}
-AI technologies provide targeted assistance at each SDLC phase, addressing specific challenges and improving efficiency:
+Its transformative impact on development practices includes:
 
 \begin{itemize}
-    \item \textbf{Requirements and Planning:} AI analyzes historical project data to estimate timelines, identify ambiguities in requirements, and suggest optimal resource allocation. Natural language processing helps translate business requirements into technical specifications with higher precision.
-    
-    \item \textbf{Design and Architecture:} AI assists architects by analyzing existing codebases, recommending architectural patterns, detecting design anti-patterns, and ensuring alignment with organizational standards. This reduces the likelihood of systemic flaws early in the project lifecycle.
-    
-    \item \textbf{Implementation:} During coding, AI agents provide context-aware code completions, enforce framework-specific best practices, detect potential bugs, and suggest refactoring opportunities. This reduces rework, accelerates development, and supports consistent code quality.
-    
-    \item \textbf{Testing and Quality Assurance:} AI generates comprehensive test cases, identifies edge cases that might be missed manually, prioritizes test execution based on risk, and evaluates code quality against defined standards. This enhances reliability and reduces technical debt accumulation.
-    
-    \item \textbf{Deployment and Maintenance:} AI monitors deployment health, predicts potential issues, and recommends optimizations based on performance metrics and usage patterns. Continuous insights help maintain system stability and inform future development iterations.
+\item \textbf{From Reactive to Proactive:} Feedback is delivered continuously during coding and design, preventing issues before they require refactoring.
+\item \textbf{From Inconsistent to Scalable:} AI agents provide uniform, expert-level guidance across teams and codebases.
+\item \textbf{From Static to Adaptive:} AI adapts to project-specific patterns, team preferences, and evolving best practices.
+\item \textbf{From Isolated to Integrated:} Guidance is embedded within workflows rather than treated as a separate phase, bridging planning, implementation, testing, and maintenance.
 \end{itemize}
 
-Overall, the AI-enhanced SDLC shifts the development workflow from reactive and fragmented practices toward a more proactive, adaptive, and integrated approach. By embedding intelligent assistance at every stage, it directly addresses the challenges of scaling teams, maintaining consistent quality, and supporting internal framework-specific best practices—core objectives of this project.
+\subsubsection{AI Applications Across the SDLC}
+AI can support specific phases of the SDLC as follows:
+
+\begin{itemize}
+\item \textbf{Requirements and Planning:} Estimate timelines, identify ambiguities, and translate requirements into technical specifications.
+\item \textbf{Design and Architecture:} Recommend patterns, detect anti-patterns, and ensure compliance with organizational standards.
+\item \textbf{Implementation:} Context-aware code completion, best practice enforcement, bug detection, and refactoring guidance.
+\item \textbf{Testing and Quality Assurance:} Generate test cases, identify edge cases, and prioritize test execution.
+\item \textbf{Deployment and Maintenance:} Monitor performance, predict issues, and recommend optimizations.
+\end{itemize}
+
+Overall, the AI-enhanced SDLC shifts development from reactive, fragmented practices to a proactive, adaptive, and integrated approach. This aligns directly with the goals of this project: delivering real-time, framework-specific guidance within the IDE to improve developer efficiency and maintain code quality.
 
 \section{State of the Art and Existing Solutions}
 
-This section examines both market-available solutions (state of the art) and environment-specific approaches (existing solutions) to understand the current landscape of code quality and best practices enforcement.
+Building on the foundations above, this section examines both market-available solutions and environment-specific approaches to understand the current landscape of code quality enforcement and developer assistance, identifying gaps that the proposed solution aims to fill.
 
-\subsection{State of the Art: Market Solutions}
+\subsection{State of the Art}
 
-The software development market offers various AI-powered tools and platforms that aim to enhance code quality and developer productivity. These solutions represent the current state of the art in intelligent development assistance:
+The software development market offers a variety of AI-powered tools and platforms designed to enhance code quality and developer productivity. These solutions represent the current state of the art in intelligent development assistance.
 
-\paragraph{AI-Powered Code Analysis Tools}
-Commercial and open-source solutions provide intelligent code analysis capabilities:
-
-\begin{itemize}
-    \item \textbf{AI Code Assistants:} Tools like GitHub Copilot, Amazon CodeWhisperer, and Tabnine provide AI-powered code completion and generation, helping developers write code more efficiently.
-    
-    \item \textbf{AI-Powered IDEs:} Modern development environments like Cursor and Claude Code integrate AI assistance directly into the coding workflow, offering context-aware code generation, refactoring, and intelligent suggestions.
-    
-    \item \textbf{Static Analysis Platforms:} Solutions such as SonarQube, CodeClimate, and DeepCode offer automated code quality analysis with AI-enhanced pattern detection.
-    
-    \item \textbf{AI Code Review Tools:} Platforms like PullRequest.com and CodeRabbit provide AI-assisted code review capabilities, offering automated suggestions and quality assessments.
-\end{itemize}
-
-\paragraph{Market Solution Capabilities}
-These market solutions typically offer:
+\subsubsection{AI-Powered Code Analysis Tools}
+Key categories include:
 
 \begin{itemize}
-    \item \textbf{General Code Analysis:} Broad pattern recognition and quality assessment across multiple programming languages and frameworks.
-    
-    \item \textbf{AI-Powered Suggestions:} Intelligent recommendations for code improvements, refactoring, and best practices.
-    
-    \item \textbf{Integration with Popular IDEs:} Seamless integration with widely-used development environments like VS Code, IntelliJ, and Eclipse.
+\item \textbf{AI Code Assistants:} GitHub Copilot, Amazon CodeWhisperer, and Tabnine provide AI-powered code completion and generation, helping developers write code more efficiently.
+\item \textbf{AI-Powered IDEs:} Tools like Cursor and Claude Code integrate AI assistance directly into the coding workflow, offering context-aware code generation, refactoring, and intelligent suggestions.
+\item \textbf{Static Analysis Platforms:} Solutions such as SonarQube, CodeClimate, and DeepCode offer automated code quality analysis with AI-enhanced pattern detection.
+\item \textbf{AI Code Review Tools:} Platforms like PullRequest.com and CodeRabbit provide AI-assisted code review, offering automated suggestions and quality assessments.
 \end{itemize}
 
-\subsection{Existing Solutions: Environment-Specific Approaches}
+\subsubsection{Capabilities of Market Solutions}
+Typical features include:
 
-Within our specific development environment, software engineers currently rely on a combination of modern AI-powered tools and traditional approaches to maintain code quality and enforce best practices:
-
-\paragraph{Current Feedback Mechanisms}
-The existing approaches in our environment can be categorized into several key mechanisms:
-
-\begin{itemize}    
-    
-    \item \textbf{Code Reviews:} Human reviewers examine code for design quality, readability, maintainability, and adherence to standards. While this approach provides high-level, context-aware feedback, it often introduces delays and requires significant effort.
-    
-    \item \textbf{Presubmit Checks:} Automated scripts that validate code before submission, enforcing style guides, ensuring compilation, and verifying simple correctness and safety constraints. Although fast and reliable, they primarily focus on surface-level checks and do not consider design or contextual issues.
-    
-    \item \textbf{Coding Assistant:} Our internal IDE includes an integrated coding assistant that provides AI-powered code completion, generation, and basic suggestions to help developers write code more efficiently.
-
-    \item \textbf{Linters:} Live IDE-integrated linters that catch style issues, deprecations, and basic code quality problems in real-time as developers write code. These tools provide immediate feedback on syntax, formatting, and some best practices.
-
-    \item \textbf{Rule-Based Checks:} Systems that enforce coding conventions, naming schemes, and formatting standards. These tools provide consistency and objectivity but cannot reason about complex or context-dependent best practices.
-\end{itemize}
-
-\paragraph{Gap Analysis: Market vs. Environment Solutions}
-
-While both market solutions and environment-specific approaches provide valuable capabilities, they leave significant gaps in addressing internal framework-specific best practices:
-
-\textbf{Market Solution Limitations:}
 \begin{itemize}
-    \item \textbf{Generic Analysis:} Market tools provide general code quality analysis but lack deep understanding of internal framework-specific conventions and patterns.
-    
-    \item \textbf{External Dependency:} Commercial solutions require external data sharing and may not align with internal security and privacy requirements.
-    
-    \item \textbf{Limited Customization:} Generic tools cannot be easily customized to enforce internal-specific best practices and architectural patterns.
+\item \textbf{General Code Analysis:} Broad pattern recognition and quality assessment across multiple languages and frameworks.
+\item \textbf{AI-Powered Suggestions:} Recommendations for code improvements, refactoring, and general best practices.
+\item \textbf{IDE Integration:} Seamless integration with widely used environments such as VS Code, IntelliJ, and Eclipse.
 \end{itemize}
 
-\textbf{Environment Solution Limitations:}
-While our environment includes a coding assistant and live linters, there remains a significant gap in providing intelligent feedback specifically for internal framework best practices during the active coding phase. This timeline illustrates where current feedback mechanisms fit into the developer workflow:
+\subsection{Existing Environment-Specific Approaches}
+
+Within our development environment, software engineers rely on a combination of modern AI-powered tools and traditional mechanisms to maintain code quality.
+
+\subsubsection{Current Feedback Mechanisms}
+
+\begin{itemize}
+\item \textbf{Code Reviews:} Human reviewers provide context-aware feedback on design quality, readability, maintainability, and adherence to standards. Feedback is high-level but often delayed and resource-intensive.
+\item \textbf{Presubmit Checks:} Automated scripts enforce style guides, compilation correctness, and basic safety constraints. They are fast but primarily focus on surface-level checks.
+\item \textbf{Coding Assistant:} Internal IDE features AI-powered code completion, generation, and basic suggestions.
+\item \textbf{Linters:} IDE-integrated linters provide real-time style and deprecation warnings but do not enforce complex best practices.
+\item \textbf{Rule-Based Checks:} Enforce coding conventions and naming schemes consistently but cannot reason about complex or context-dependent practices.
+\end{itemize}
+
+\subsubsection{Gap Analysis: Market vs. Environment Solutions}
+
+While both market solutions and environment-specific approaches provide valuable capabilities, they leave significant gaps in enforcing internal framework-specific best practices during the coding phase.
+
+\paragraph{Limitations of Market Solutions}
+
+\begin{itemize}
+\item \textbf{Generic Analysis:} Lack deep understanding of internal framework-specific conventions.
+\item \textbf{External Dependency:} May require sharing internal code, posing security or privacy concerns.
+\item \textbf{Limited Customization:} Cannot easily enforce project-specific practices or architectural patterns.
+\end{itemize}
+
+\paragraph{Limitations of Environment Solutions}
+
+\begin{itemize}
+\item Coding Assistant and linters focus on general guidance, not framework-specific practices.
+\item Rule-based and presubmit checks are reactive rather than proactive, offering feedback after coding rather than during authoring.
+\end{itemize}
+
+Figure~\ref{fig:developer_workflow_feedback_timeline} illustrates how current mechanisms provide feedback at different points in the workflow, highlighting the gap during active coding.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.9]{Images/developer_workflow_feedback_timeline.png}
-    \caption{Current Developer Workflow Feedback Timeline}
-    \label{fig:developer_workflow_feedback_timeline}
+\centering
+\includegraphics[scale=0.9]{Images/developer_workflow_feedback_timeline.png}
+\caption{Current Developer Workflow Feedback Timeline}
+\label{fig:developer_workflow_feedback_timeline}
 \end{figure}
 
-During the \textbf{Coding Phase}, developers get support from the Coding Assistant for code generation and completion, and from Linters for style issues and deprecations. However, these tools focus on general coding assistance and basic quality checks rather than internal framework-specific best practices.
+\subsubsection{Impact of Delayed Feedback}
 
-The most insightful feedback on design and best practices typically comes during \textbf{Code Review}, but this happens after the initial development, making changes more disruptive.
-
-Finally, \textbf{Presubmit Checks} before submission focus on correctness and safety, not on proactive best practice guidance.
-
-This leaves a significant gap: there's no real-time, intelligent support for adhering to internal framework best practices while the developer is actively coding, which is the gap our project aims to fill.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
-\hline
-\textbf{Approach} & \textbf{Strengths} & \textbf{Limitations} \\
-\hline
-Code Reviews & Context-aware, high-level insights & Feedback delayed, time-consuming \\
-\hline
-Presubmit Checks & Fast, automated validation & Limited scope, mostly syntax and safety \\
-\hline
-Coding Assistant & AI-powered code generation, completion & General assistance, not framework-specific \\
-\hline
-Linters & Real-time style and deprecation checks & Basic quality only, not best practices \\
-\hline
-Rule-Based Checks & Consistency, objectivity & Cannot handle complex or contextual practices \\
-\hline
-\end{tabular}
-    \caption{Comparison of available software quality support solutions}
-\label{tab:extended_solutions}
-\end{table}
-
-    
-\paragraph{Impact of Delayed Feedback}
-Following from the previous analysis, these workflow issues create concrete impacts on development:
+The current workflow introduces several challenges:
 
 \begin{itemize}
-    \item \textbf{Technical Debt Accumulation:} Delayed feedback and limited enforcement of best practices lead to accumulating technical debt and inconsistencies in code quality over time.
-    
-    \item \textbf{Prolonged Review Cycles:} Review cycles take longer because developers must iterate multiple times to address issues discovered late in the process.
-    
-    \item \textbf{Developer Frustration:} The repetitive cycle of late-stage corrections contributes to developer frustration and reduced productivity.
-    
-    \item \textbf{Inconsistent Quality Standards:} Without real-time guidance, adherence to best practices varies significantly across team members and projects.
-    
-    \item \textbf{Increased Development Costs:} The cost of fixing issues increases exponentially the later they are discovered in the development process.
+\item \textbf{Technical Debt Accumulation:} Delayed feedback leads to inconsistencies and long-term maintenance costs.
+\item \textbf{Prolonged Review Cycles:} Multiple iterations are required to fix issues discovered late.
+\item \textbf{Developer Frustration:} Repetitive corrections decrease productivity.
+\item \textbf{Inconsistent Quality Standards:} Lack of real-time guidance leads to variable adherence across teams.
+\item \textbf{Increased Costs:} Late discovery of issues exponentially increases remediation effort.
 \end{itemize}
 
-This analysis clearly demonstrates why we need a solution that brings intelligent best practices guidance earlier, directly into the authoring process, addressing the specific gap in internal framework best practices enforcement that current approaches cannot fill.
+\subsection{Opportunity for Framework-Specific AI Solutions}
 
+The analysis reveals a clear opportunity for integrating framework-specific AI solutions. Combining the intelligence of market tools with the specificity required for internal frameworks, these solutions can deliver real-time, context-aware guidance directly in the coding phase.
 
+Such a solution addresses the observed gap:
 
+\begin{itemize}
+\item Real-time adherence to internal framework best practices.
+\item Integration directly into the developer workflow.
+\item Proactive feedback that reduces review effort and technical debt.
+\end{itemize}
 
-\paragraph{Opportunity for Framework-Specific AI Solutions}
-
-The analysis reveals a clear opportunity for developing framework-specific AI solutions that combine the intelligence of market tools with the specificity required for YouTube framework best practices. While market solutions provide general AI capabilities and environment solutions offer domain knowledge, neither adequately addresses the need for real-time, intelligent feedback tailored to YouTube framework conventions.
-
-This gap creates a compelling case for integrating LLM-powered assistance directly into the YouTube development workflow, providing intelligent, context-aware guidance that understands both general best practices and YouTube-specific patterns.
-
----
-
+This motivates the development of an LLM-powered, IDE-integrated assistant that provides intelligent, framework-aware support, complementing existing tools while filling the critical gap in real-time guidance.
 \section{Project Requirements}
 
-To tackle the issue of delayed feedback and limited intelligent assistance, our solution integrates the power of large language models directly into the developer's workflow in the IDE.
+We now translate the identified opportunity into concrete requirements. The proposed solution integrates LLM-powered assistance directly into the developer workflow within the IDE to provide real-time, actionable guidance while maintaining performance, usability, and scalability.
 
-The proposed system builds on gaps identified in existing solutions. It aims to provide real-time, AI-driven feedback directly in the developer workflow, while maintaining performance, scalability, and usability.
+\subsection{Motivation for Use Case Analysis}
+
+Understanding how developers will interact with the system is critical for designing effective functionality. Use case analysis provides a structured approach to capture user-system interactions, identify key actors, and define the boundaries of the system. This ensures that the system delivers targeted support precisely where it is needed during the active coding phase.
+
+\subsubsection{System Use Cases}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{images/use_case_diagram.png}
+    \caption{System Use Case Diagram}
+    \label{fig:use_case_diagram}
+    \end{figure}
+
+Figure~\ref{fig:use_case_diagram} illustrates the core functionality of the system from the perspective of YouTube developers. The primary actor is the \textbf{YouTube Developer}, who interacts with the system through three main use cases:
+
+\begin{enumerate}
+\item \textbf{Request Code Analysis:} Trigger real-time evaluation of code for adherence to framework best practices.
+\item \textbf{Review Violations and Explanations:} Inspect flagged violations, with clear, context-specific explanations provided by the system.
+\item \textbf{Apply Suggested Fixes (Optional):} Accept, modify, or reject actionable AI-generated suggestions to improve code quality.
+\end{enumerate}
+
+This design ensures that developers remain in control of their workflow while benefiting from comprehensive, intelligent feedback. Optional scenarios, such as applying fixes, allow flexibility and respect developer autonomy. The use case diagram focuses on core interactions, leaving authentication and administrative workflows out of scope.
 
 \subsection{Functional Requirements}
-The system must:
+
+Based on the use cases and the gaps identified in existing tools, the system must provide the following core functionalities:
+
 \begin{itemize}
-    \item \textbf{Detect Framework Violations:} Identify violations of internal YouTube framework best practices and coding standards in real-time during development.
-    
-    \item \textbf{Provide Contextual Explanations:} Explain violations in clear, developer-friendly language with context-specific rationale that helps developers understand why certain patterns are problematic.
-    
-    \item \textbf{Generate Actionable Fixes:} Suggest specific, actionable fixes leveraging AI-generated solutions tailored to YouTube framework patterns and conventions.
-    
-    \item \textbf{Enable Developer Interaction:} Allow developers to accept, reject, or modify AI suggestions, providing full control over the implementation of recommended changes.
-    
-    \item \textbf{Maintain Contextual Relevance:} Ensure feedback appears in the appropriate location within the code and remains relevant and accurate as the developer continues coding.
-    
-    \item \textbf{Seamless IDE Integration:} Integrate seamlessly with the existing internal IDE, extension, and backend workflow without disrupting the developer's current development process.
+\item \textbf{Detect Framework Violations:} Identify violations of internal YouTube framework best practices in real-time.
+\item \textbf{Provide Contextual Explanations:} Deliver developer-friendly explanations that clarify why a particular pattern is problematic.
+\item \textbf{Generate Actionable Fixes:} Suggest concrete AI-driven solutions aligned with framework conventions.
+\item \textbf{Enable Developer Interaction:} Allow developers to accept, reject, or modify suggested fixes, maintaining workflow control.
+\item \textbf{Maintain Contextual Relevance:} Ensure feedback remains accurate and properly anchored as code evolves.
+\item \textbf{Seamless IDE Integration:} Embed within the existing internal IDE without disrupting normal development processes.
 \end{itemize}
 
 \subsection{Non-Functional Requirements}
-The system should also meet broader quality criteria:
+
+In addition to core functionality, the system must satisfy broader quality criteria:
+
 \begin{itemize}
-    \item \textbf{Performance:} Provide fast, near real-time responses to avoid interrupting developer workflow.
-    \item \textbf{Scalability:} Efficiently handle large codebases and multiple simultaneous users.
-    \item \textbf{Maintainability:} Enable modular updates, addition of new AI models, or coding rules.
-    \item \textbf{Reliability:} Ensure robustness in production environments with minimal downtime.
-    \item \textbf{Security and Privacy:} Comply with organizational policies, ensuring safe handling of code and data.
-    \item \textbf{Usability:} Deliver concise, context-aware, and minimally intrusive feedback.
-    \item \textbf{Extensibility:} Easily add new rules, models, or integrations.
+\item \textbf{Performance:} Provide near real-time feedback to avoid interrupting workflow.
+\item \textbf{Scalability:} Efficiently handle large codebases and multiple simultaneous users.
+\item \textbf{Maintainability:} Support modular updates, addition of new rules, and AI model improvements.
+\item \textbf{Reliability:} Operate robustly in production with minimal downtime.
+\item \textbf{Security and Privacy:} Comply with organizational policies, safeguarding code and data.
+\item \textbf{Usability:} Deliver concise, context-aware, and minimally intrusive feedback.
+\item \textbf{Extensibility:} Allow easy addition of new rules, models, or integrations.
 \end{itemize}
+
+Table~\ref{tab:extended_requirements} summarizes functional and non-functional requirements.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|p{6cm}|p{8cm}|}
+\caption{Summary of Project Requirements}
+\label{tab:extended_requirements}
+\begin{tabular}{|p{3cm}|p{11cm}|}
 \hline
 \textbf{Requirement Type} & \textbf{Description} \\
 \hline
-Functional & Framework violation detection, contextual explanations, actionable fixes, developer interaction, contextual relevance, seamless IDE integration \\
+Functional & Detection, explanations, fixes, interaction, context, IDE integration \\
 \hline
 Non-Functional & Performance, scalability, maintainability, reliability, security, usability, extensibility \\
 \hline
 \end{tabular}
-\caption{Summary of project requirements}
-\label{tab:extended_requirements}
 \end{table}
 
-\paragraph{Rationale}
-These requirements address limitations identified in existing solutions by embedding proactive, context-aware feedback directly in the coding workflow, specifically targeting YouTube framework best practices. This approach enhances developer productivity, reduces framework-specific errors, and supports consistent adherence to internal YouTube development standards.
 
+These requirements directly address the gaps identified in both market and environment-specific solutions. By embedding proactive, context-aware feedback into the coding workflow, the system:
+
+\begin{itemize}
+\item Reduces framework-specific errors during development.
+\item Improves adherence to YouTube internal standards.
+\item Enhances developer productivity by providing guidance in real-time.
+\end{itemize}
+
+The use case analysis connects these requirements to real developer interactions, ensuring that the system’s functionality aligns with actual workflow needs and supports effective adoption.
 
 \section*{Conclusion}
-This chapter established the business and theoretical foundation for integrating AI into YouTube framework development workflows. Beginning with an analysis of modern development challenges, it identified key issues in maintaining code quality and consistency across growing teams. The exploration of AI technologies—particularly Large Language Models and AI agents—revealed their potential for addressing these challenges through proactive, context-aware assistance.
 
-The examination of both market solutions and environment-specific approaches highlighted significant limitations: market tools lack framework-specific knowledge, while traditional environment solutions provide delayed feedback and limited scope. There remains a critical gap in delivering real-time, intelligent assistance tailored to YouTube framework best practices.
-
-The project requirements defined in this chapter focus on bridging this gap through real-time, AI-driven feedback that integrates seamlessly into the YouTube development workflow. The proposed solution combines the intelligence of modern AI technologies with the specificity required for YouTube framework conventions, setting the stage for the detailed system design presented in the following chapter.  
-
-
+This chapter formalizes the project requirements, bridging the gap between the problem analysis and system design. It introduces the rationale for capturing developer interactions via use cases, defines functional and non-functional requirements, and establishes concrete acceptance criteria. Together, these elements provide a solid foundation for the subsequent system design chapter.
 
 
 

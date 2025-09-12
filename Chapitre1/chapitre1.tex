@@ -26,7 +26,9 @@ guides the development process.
 \section{Host Company: Google} 
 
 \subsection{Presentation} 
-Founded in 1998, Google LLC is a global leader in technology and innovation. As a subsidiary of Alphabet Inc., Google’s mission is to organize the world’s information and make it universally accessible and useful. Guided by values such as innovation, accessibility, sustainability, and user trust, Google has established itself as one of the most influential companies shaping the digital era. Its culture emphasizes collaboration, diversity, inclusion, and impact-driven engineering, enabling continuous leadership in research and product development.
+Founded in 1998, Google LLC is a global leader in technology and innovation~\cite{google2024company}. As a subsidiary of Alphabet Inc., Google's mission is to organize the world's information and make it universally accessible and useful. Guided by values such as innovation, accessibility, sustainability, and user trust, Google establishes itself as one of the most influential companies shaping the digital era. Its culture emphasizes collaboration, diversity, inclusion, and impact-driven engineering, enabling continuous leadership in research and product development.
+
+Figure~\ref{fig:google_logo} shows the Google logo.
 
 \begin{figure}[!ht]\centering
 \includegraphics[scale=0.06]{Images/google_logo.png}
@@ -39,17 +41,21 @@ Google offers a broad ecosystem of products and services that touch nearly every
 
 Beyond consumer services, Google develops enterprise and cloud-based solutions such as Google Cloud Platform and Google Workspace, as well as advanced AI systems like Vertex AI. The company also invests in hardware, including Pixel devices, Nest smart home products, and ChromeOS. 
 
-These products reflect Google’s commitment to connecting people, improving productivity, and driving digital transformation worldwide.
+These products reflect Google's commitment to connecting people, improving productivity, and driving digital transformation worldwide.
+
+Figure~\ref{fig:google_products} provides an overview of some Google products.
 
 \begin{figure}[!ht]\centering
-\includegraphics[scale=1.1]{Images/google_products.jpg}
+\includegraphics[scale=1.3]{Images/google_products.jpg}
 \caption{Overview of some Google products}
 \label{fig:google_products}
 \end{figure}
 
 \subsection{Focus Area} 
 \subsubsection{YouTube}
-Acquired by Google in 2006, YouTube has become the world’s leading video-sharing platform, serving more than two billion logged-in users monthly. It empowers individuals to create, share, and discover video content globally while sustaining a vibrant creator economy. From a technical perspective, YouTube integrates video processing, recommendation systems, live streaming, advertising, and trust and safety to deliver a seamless experience across devices.
+Acquired by Google in 2006~\cite{youtube2024platform}, YouTube becomes the world's leading video-sharing platform, serving more than two billion logged-in users monthly. It empowers individuals to create, share, and discover video content globally while sustaining a vibrant creator economy. From a technical perspective, YouTube integrates video processing, recommendation systems, live streaming, advertising, and trust and safety to deliver a seamless experience across devices.
+
+Figure~\ref{fig:youtube_logo} displays the YouTube logo.
 
 \begin{figure}[!ht]\centering
 \includegraphics[scale=0.06]{Images/youtube_logo.png}
@@ -66,9 +72,9 @@ Within YouTube’s engineering organization, the Developer Infrastructure (Dev I
 \section{Project Overview}
 
 \subsection{Project Context}
-This project was developed within the scope of a development infrastructure team dedicated to supporting developers by providing tools and extensions that enhance their daily workflows. As part of this mission, the team is exploring how artificial intelligence can be leveraged to assist developers in maintaining code quality and adhering to best practices. The goal is to investigate how large language models (LLMs) can complement traditional approaches by offering more intelligent and context-aware guidance directly within the IDE.  
+This project develops within the scope of a development infrastructure team dedicated to supporting developers by providing tools and extensions that enhance their daily workflows. As part of this mission, the team explores how artificial intelligence can be leveraged to assist developers in maintaining code quality and adhering to best practices. The goal is to investigate how large language models (LLMs) can complement traditional approaches by offering more intelligent and context-aware guidance directly within the IDE.  
 
-In parallel, this work also constitutes the mandatory fifth-year final project required for obtaining the software engineering degree at the National Institute of Applied Science and Technology, providing both academic and practical significance.  
+In parallel, this work also constitutes the mandatory end-of-studies-internship project required for obtaining the software engineering degree at the National Institute of Applied Science and Technology, providing both academic and practical significance.  
 
 \subsection{Problem Statement}
 In large-scale software development environments, maintaining uniform adherence to \textbf{internal framework–specific guidelines} across multiple teams is crucial for ensuring code quality, consistency, and long-term maintainability. While modern development environments provide assistance for general programming practices or widely used frameworks, they lack intelligent support for the nuanced, evolving rules of internal frameworks. As a result, developers often receive feedback on internal best practices only during code reviews, after significant effort has already been invested. This delayed feedback cycle leads to inefficiencies such as rework, slower iterations, and frustration among teams who must refactor code that was previously considered complete. The absence of real-time, context-aware guidance tailored to internal frameworks leaves developers navigating complex design decisions without adequate support, leading to technical debt, inconsistent quality, and higher onboarding complexity. Addressing this gap requires solutions that proactively enforce internal framework best practices during the coding phase, providing timely and context-specific feedback directly within the IDE.  
@@ -87,12 +93,12 @@ By integrating intelligent, framework-aware feedback directly into the coding wo
 \section{Work Methodology}
 
 \subsection{Agile Development Approach}
-Agile software development, as defined by Beck et al.~\cite{beck2001agile}, emphasizes "individuals and interactions over processes and tools, working software over comprehensive documentation, customer collaboration over contract negotiation, and responding to change over following a plan." This methodology was adopted to support iterative development and maintain flexibility in responding to evolving requirements. According to Martin~\cite{martin2003agile}, agile practices enable continuous integration of feedback, ensuring that each increment of work aligns with both technical goals and the broader product vision. Testing, validation, and code reviews were incorporated throughout the process to maintain high quality, while frequent collaboration provided clarity and shared ownership of outcomes. Agile principles complemented the focus on engineering excellence, including rigorous design reviews, thorough testing, robust code reviews, and DevOps-enabled automation.
+Agile software development, as defined by Beck et al.~\cite{beck2001agile}, emphasizes "individuals and interactions over processes and tools, working software over comprehensive documentation, customer collaboration over contract negotiation, and responding to change over following a plan." This methodology is adopted to support iterative development and maintain flexibility in responding to evolving requirements. According to Martin~\cite{martin2003agile}, agile practices enable continuous integration of feedback, ensuring that each increment of work aligns with both technical goals and the broader product vision. Testing, validation, and code reviews are incorporated throughout the process to maintain high quality, while frequent collaboration provides clarity and shared ownership of outcomes. Agile principles complement the focus on engineering excellence, including rigorous design reviews, thorough testing, robust code reviews, and DevOps-enabled automation.
 
 \subsection{Kanban Workflow}
-Kanban, as described by Anderson~\cite{anderson2010kanban}, is "a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members." The dynamic workload of the development infrastructure team, including feature requests, bug fixes, and maintenance tasks, was managed using this Kanban workflow. According to Kniberg and Skarin~\cite{kniberg2011kanban}, Kanban enables teams to visualize tasks and limit work in progress, preventing bottlenecks and allowing quick focus shifts to urgent issues when necessary. Work was structured into stages to maintain clear coordination while allowing the flexibility to adapt priorities as requirements evolved.  
+Kanban, as described by Anderson~\cite{anderson2010kanban}, is "a method for managing knowledge work with an emphasis on just-in-time delivery while not overloading the team members." The dynamic workload of the development infrastructure team, including feature requests, bug fixes, and maintenance tasks, is managed using this Kanban workflow. According to Kniberg and Skarin~\cite{kniberg2011kanban}, Kanban enables teams to visualize tasks and limit work in progress, preventing bottlenecks and allowing quick focus shifts to urgent issues when necessary. Work is structured into stages to maintain clear coordination while allowing the flexibility to adapt priorities as requirements evolve.  
 
-The Kanban workflow included the following stages:
+The Kanban workflow includes the following stages, as illustrated in Figure~\ref{fig:kanban_workflow}:
 
 \begin{itemize}
     \item \textbf{Backlog:} Prioritized collection of feature requests, enhancements, and bug fixes.
@@ -104,14 +110,14 @@ The Kanban workflow included the following stages:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.65]{Images/kanban_workflow.jpg}
+    \includegraphics[scale=0.2]{Images/kanban.png}
     \caption{Kanban Workflow}
     \label{fig:kanban_workflow}
 \end{figure}
 
 
 \subsection{Development Process}
-The project followed an iterative engineering cycle designed to balance thorough planning with incremental delivery, as illustrated in Figure~\ref{fig:development_cycle}. This cycle guided the work through structured stages, supported by dedicated tools and regular collaboration:
+The project follows an iterative engineering cycle designed to balance thorough planning with incremental delivery, as illustrated in Figure~\ref{fig:development_cycle}. This cycle guides the work through structured stages, supported by dedicated tools and regular collaboration:
 
 \begin{figure}[H]
     \centering
@@ -120,45 +126,76 @@ The project followed an iterative engineering cycle designed to balance thorough
     \label{fig:development_cycle}
 \end{figure}
 
-The main stages, as depicted in the figure, included:
+The main stages, as depicted in the figure, include:
 
 \begin{itemize}
-    \item \textbf{Onboarding and Initial Tasks:} The project began with a structured onboarding phase, where familiarization with internal tools, repositories, and coding standards was combined with the resolution of assigned bugs. This phase ensured a smooth transition into the team’s workflow and provided early practical experience.
+    \item \textbf{Onboarding and Initial Tasks:} The project begins with a structured onboarding phase, where familiarization with internal tools, repositories, and coding standards combines with the resolution of assigned bugs. This phase ensures a smooth transition into the team's workflow and provides early practical experience.
 
-    \item \textbf{Ideation and Research:} Following onboarding, the project entered an exploration phase to clarify objectives, gather requirements, and investigate potential solution directions. Independent research was complemented by collaborative discussions to assess feasibility and align priorities.
+    \item \textbf{Ideation and Research:} Following onboarding, the project enters an exploration phase to clarify objectives, gather requirements, and investigate potential solution directions. Independent research complements collaborative discussions to assess feasibility and align priorities.
 
-    \item \textbf{Design and Planning:} A detailed design document was authored to present technical choices, architectural considerations, and the proposed workflow. The document underwent iterative review by engineers, and the final approved plan was transferred to the internal task management system for structured tracking and prioritization.
+    \item \textbf{Design and Planning:} A detailed design document is authored to present technical choices, architectural considerations, and the proposed workflow. The document undergoes iterative review by engineers, and the final approved plan is transferred to the internal task management system for structured tracking and prioritization.
 
-    \item \textbf{Implementation:} Development was performed in small, reviewable increments using the internal development environment within the company-wide repository. Each change was submitted with unit tests and validated through manual and AI-assisted code reviews.
+    \item \textbf{Implementation:} Development is performed in small, reviewable increments using the internal development environment within the company-wide repository. Each change is submitted with unit tests and validated through manual and AI-assisted code reviews.
 
-    \item \textbf{Testing and Validation:} Functionality and reliability were verified continuously. Automated unit tests ensured correctness at the component level, while integration reviews and structured evaluations validated the behavior within the larger system.
+    \item \textbf{Testing and Validation:} Functionality and reliability are verified continuously. Automated unit tests ensure correctness at the component level, while integration reviews and structured evaluations validate the behavior within the larger system.
 
-    \item \textbf{Maintenance and Optimization:} Refactoring, bug fixes, and updates were performed throughout development, particularly as dependencies evolved or methods became deprecated. This ensured that the solution remained consistent, maintainable, and aligned with evolving standards.
+    \item \textbf{Maintenance and Optimization:} Refactoring, bug fixes, and updates are performed throughout development, particularly as dependencies evolve or methods become deprecated. This ensures that the solution remains consistent, maintainable, and aligned with evolving standards.
 \end{itemize}
 
-Collaboration was supported through a structured communication rhythm, combining regular syncs with the host and co-host, weekly team meetings, and occasional cross-team discussions. This cadence provided timely feedback, clear guidance, and alignment on shared dependencies throughout the iterative cycle.
+Collaboration is supported through a structured communication rhythm, combining regular syncs with the host and co-host, weekly team meetings, and occasional cross-team discussions. This cadence provides timely feedback, clear guidance, and alignment on shared dependencies throughout the iterative cycle.
 
 
 \subsection{Project Timeline}
-The project spanned four months (May 5 – September 5, 2025). Work was scheduled based on business priorities and technical dependencies. Early weeks focused on research and design, followed by implementation, testing, and iterative refinement.
+The project spans four months (May 5 – September 5, 2025). Work is scheduled based on business priorities and technical dependencies. Early weeks focus on research and design, followed by implementation, testing, and iterative refinement.
+
+Figure~\ref{fig:project_timeline} shows the detailed project timeline.
 
 % Landscape page for timeline
 \newpage
 \begin{landscape}
-\vspace*{\fill}
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1.3\textwidth,height=0.9\textheight,keepaspectratio]{Images/project_timeline.png}
-    \caption{Project Timeline - Detailed Schedule}
-    \label{fig:project_timeline}
-\end{figure}
-\vspace*{\fill}
+    \vspace*{\fill}
+    \begin{figure}[!ht]
+        \centering
+        \begin{ganttchart}[
+            hgrid,
+            vgrid,
+            time slot format=isodate,
+            x unit=0.13cm,           % slightly smaller for horizontal fit
+            bar height=1.10,
+            y unit chart=1.20cm,
+            y unit title=1.40cm,
+            title height=1.2,
+            title/.append style={font=\Large},
+            bar label font=\small,
+            group label font=\small,
+            milestone label font=\small,
+            group/.append style={fill=black!20},
+            bar top shift=0.8,       % push bars down
+        ]{2025-05-05}{2025-09-05}
+
+            \gantttitlecalendar{month=name} \\  % month names
+
+            \ganttgroup{Onboarding}{2025-05-05}{2025-05-18} \\
+            \ganttgroup{Research \& Ideation}{2025-05-19}{2025-06-01} \\
+            \ganttgroup{Design \& Planning}{2025-06-02}{2025-06-15} \\
+            \ganttgroup{LLM Agent Development}{2025-06-16}{2025-07-15} \\
+            \ganttgroup{Core Integration in Extension}{2025-07-16}{2025-07-31} \\
+            \ganttgroup{UI \& Workflow Testing}{2025-08-01}{2025-08-21} \\
+            \ganttgroup{Documentation}{2025-08-22}{2025-08-28} \\
+            \ganttgroup{Presentation \& Feedback}{2025-09-01}{2025-09-04} \\
+            \ganttgroup{Tuning \& Maintenance}{2025-06-16}{2025-08-21}
+
+        \end{ganttchart}
+        \caption{Project Timeline - Detailed Schedule}
+        \label{fig:project_timeline}
+    \end{figure}
+    \vspace*{\fill}
 \end{landscape}
-\newpage
+
 
 
 \section*{Conclusion}
-In summary, this chapter outlined the project’s context by presenting the host company, defining the problem, and clarifying the main objectives and challenges. It also described the methodology chosen to guide the work, which provides the basis for the technical developments detailed in the following chapters.
+In summary, this chapter outlines the project's context by presenting the host company, defining the problem, and clarifying the main objectives and challenges. It also describes the methodology chosen to guide the work, which provides the basis for the technical developments detailed in the following chapters.
 
 
 

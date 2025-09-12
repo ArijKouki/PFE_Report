@@ -19,33 +19,18 @@
 
 %==============================================================================
 \section*{Introduction}
-This chapter presents the system design and architecture of the LLM-powered best practices enforcement system. Building on the business understanding and requirements established in the previous chapter, this chapter details the technical design decisions, architectural patterns, and system components that enable real-time, intelligent feedback for YouTube framework development.
+This chapter presents the system design and architecture of the LLM-powered best practices enforcement system. Building on the business understanding and requirements established in Chapter~\ref{ch:business_understanding}, it details technical design decisions, architectural patterns, and system components that enable real-time, intelligent feedback for YouTube framework development.
 
 The design follows traditional software engineering principles while incorporating modern AI technologies. This chapter covers the overall system architecture, component design, data models, and integration patterns that form the foundation of the implemented solution.
 
 \section{System Architecture Overview}
 
-
-\subsection{Use Case Analysis}
-
-Understanding the system's interactions with its users is fundamental to designing an effective solution. The use case analysis identifies the primary actors and their interactions with the LLM Best Practices Enforcement System, establishing the scope and boundaries of the system's functionality.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.6]{images/use_case_diagram.png}
-\caption{System Use Case Diagram}
-\label{fig:use_case_diagram}
-\end{figure}
-
-This use case diagram illustrates the core functionality of the system from the perspective of YouTube developers. The primary actor is the YouTube Developer, who interacts with the system through three main use cases: requesting code analysis, reviewing violations and explanations, and optionally applying suggested fixes. The relationship between use cases reflects the natural workflow: analysis always includes reviewing results, while applying fixes is an optional extension that developers can choose based on their needs and preferences. This design ensures that developers maintain control over their workflow while providing comprehensive feedback when requested. The diagram focuses on the most important scenarios that occur during normal system usage, avoiding authentication and administrative scenarios that are less central to the user experience.
-
-
 \subsection{High-Level Architecture}
-The system architecture is designed to integrate seamlessly into the developer's existing workflow while providing intelligent, context-aware feedback. The architecture consists of two main components that work together to deliver real-time best practice enforcement:
+The system architecture is designed to integrate seamlessly into the developer's existing workflow while providing intelligent, context-aware feedback. It consists of two main components:
 
 \begin{itemize}
-    \item \textbf{IDE}: The developer's workspace containing the YouTube IDE Extension, which works with the currently open file being analyzed and annotates results directly in the editor.
-    \item \textbf{AI Agent Framework}: The processing layer containing the LLM Best Practices Agent, which serves as the core AI processing engine that uses internal LLMs to analyze code and suggest best practices.
+    \item \textbf{IDE:} The developer's workspace, including the YouTube IDE Extension, which works with the currently open file and annotates results directly in the editor.
+    \item \textbf{AI Agent Framework:} The processing layer containing the LLM Best Practices Agent, which performs code analysis and generates best practice suggestions.
 \end{itemize}
 
 \begin{figure}[H]
@@ -55,10 +40,10 @@ The system architecture is designed to integrate seamlessly into the developer's
 \label{fig:system_architecture}
 \end{figure}
 
-This architecture diagram illustrates the fundamental separation between the user-facing IDE extension and the AI processing backend. The YouTube IDE Extension operates within the developer's workspace, providing immediate access to analysis capabilities while maintaining the familiar development environment. The AI Agent Framework handles the computationally intensive analysis tasks, ensuring that the IDE remains responsive during processing. This separation enables independent scaling of AI capabilities without impacting the development environment's performance.
+Figure~\ref{fig:system_architecture} illustrates the separation between the IDE extension and the AI processing backend. The IDE provides immediate access to analysis capabilities, while the AI Agent Framework handles computationally intensive tasks. This separation allows independent scaling of AI capabilities without impacting IDE responsiveness.
 
 \subsection{System Workflow}
-The system operates through a streamlined workflow that begins when a developer triggers analysis via the YouTube IDE Extension. The complete interaction flow is depicted in Figure \ref{fig:sequence_diagram}.
+The system operates through a streamlined workflow beginning when a developer triggers analysis via the IDE Extension (Figure~\ref{fig:sequence_diagram}).
 
 \begin{figure}[H]
 \centering
@@ -67,94 +52,128 @@ The system operates through a streamlined workflow that begins when a developer 
 \label{fig:sequence_diagram}
 \end{figure}
 
-This sequence diagram captures the most important interaction scenario: a developer requesting analysis of their current file. The diagram shows the complete flow from user action to result presentation, demonstrating how the system maintains responsiveness by delegating heavy processing to the AI agent while providing immediate feedback through the IDE extension. This represents the primary use case that occurs most frequently in the system.
+The primary workflow includes:
 
-The sequence unfolds through the following interactions and responsibilities:
 \begin{enumerate}
-    \item \textbf{Analysis initiation}: The YouTube developer triggers analysis of the currently open file.
-    \item \textbf{Request submission}: The YouTube IDE Extension submits an analysis request to the agent, identifying the target file.
-    \item \textbf{Processing}: The agent performs best-practices analysis and prepares the resulting findings.
-    \item \textbf{Result delivery}: The agent returns a structured response to the YouTube IDE Extension.
-    \item \textbf{Presentation}: The YouTube IDE Extension presents the best practices violations and suggested fixes within the editor.
+    \item \textbf{Analysis Initiation:} The developer triggers analysis on the open file.
+    \item \textbf{Request Submission:} The IDE Extension submits the request to the AI agent, identifying the target file.
+    \item \textbf{Processing:} The agent performs best-practices analysis.
+    \item \textbf{Result Delivery:} The agent returns structured findings.
+    \item \textbf{Presentation:} The IDE Extension displays violations and suggested fixes in the editor.
 \end{enumerate}
 
-This workflow emphasizes decoupling the IDE from heavy AI computation, ensuring that the development environment remains responsive while delegating intensive analysis to the specialized agent framework.
+This workflow decouples the IDE from heavy computation, maintaining responsiveness while delegating analysis to the specialized agent framework.
 
 \section{Components Design}
 
 \subsection{LLM Best Practices Agent} 
-The LLM Best Practices Agent serves as the core intelligence engine of the system, responsible for analyzing code, identifying violations of YouTube framework best practices, and providing actionable feedback to developers. This component represents the convergence of modern AI capabilities with domain-specific software engineering expertise.
+The LLM Best Practices Agent is the core intelligence engine of the system. Its responsibilities include analyzing code, detecting violations of internal YouTube framework best practices, providing human-readable explanations, and suggesting actionable fixes. This component represents the intersection of AI capabilities with domain-specific software engineering expertise.
 
-\subsubsection{Agent Architecture Choice}
-The agent is built using the \textit{Executable Agent} architecture~\cite{microsoftAgentPatterns}, provided by our internal AI platform. This architecture offers a structured approach to orchestrating AI-powered workflows, and was selected after careful evaluation of different agent paradigms, considering reliability, performance, and maintainability.
-
-\paragraph{Executable Agent vs. ReAct Architecture}
-To motivate the choice of \textit{Executable Agent} architecture, we contrast it with the more widely known ReAct (Reasoning and Acting) pattern. In our system, the \textit{Executable Agent} refers to a deterministic, tool-orchestrated workflow where control flow is defined in code rather than delegated to LLM reasoning.
-
-\begin{itemize}
-    \item \textbf{ReAct Agent}: Uses a reasoning loop where the LLM decides what action to take next, executes it, observes the result, and continues reasoning. This creates a dynamic, LLM-driven execution flow.
-    \item \textbf{Executable Agent}: Follows a predefined, deterministic execution flow where the agent orchestrates a sequence of tool calls in a structured manner, with the LLM used primarily for processing within each tool rather than for orchestration decisions.
-\end{itemize}
-
-
-Figure~\ref{fig:agent_comparison} illustrates the fundamental difference in control flow between the two approaches.
+\subsubsection{Agent Architecture Options}
+We explored multiple architectural paradigms for the agent, drawing inspiration from established AI agent patterns~\cite{microsoftAgentPatterns}. Figure~\ref{fig:agent_comparison} illustrates the fundamental differences in control flow between the two main options.
 
 \begin{figure}[H] 
-	\centering 
-	\includegraphics[scale=0.6]{images/agent_architecture_comparison.png} 
-	\caption{Comparison of Executable Agent vs. ReAct Agent Architectures} 
-	\label{fig:agent_comparison} 
+    \centering 
+    \includegraphics[scale=0.6]{images/agent_architecture_comparison.png} 
+    \caption{Comparison of Executable Agent vs. ReAct Agent Architectures} 
+    \label{fig:agent_comparison} 
 \end{figure}
 
-The Executable Agent architecture offers several key advantages for this use case:
 \begin{itemize}
-    \item \textbf{Deterministic Execution}: Predefined flow ensures predictable behavior and simplifies debugging.
-    \item \textbf{Tool Orchestration}: Clean framework for coordinating multiple specialized tools.
-    \item \textbf{Error Handling}: Built-in mechanisms for handling failures and graceful degradation.
-    \item \textbf{Performance}: Efficient execution with low response latency, since orchestration decisions are pre-programmed rather than deferred to open-ended LLM reasoning.
-    \item \textbf{Cost Efficiency}: Reduced token consumption by constraining LLM calls to focused, well-scoped processing steps rather than repeated reasoning loops.
-    \item \textbf{Maintainability}: Clear separation of concerns between tools and responsibilities.
+    \item \textbf{ReAct Agent:} This architecture integrates \emph{reasoning and acting} loops. The LLM decides the next action, executes it, observes outcomes, and continues iterating. While highly flexible and capable of dynamic decision-making, ReAct agents introduce variability in execution flow, increased token consumption, and difficulty in guaranteeing deterministic outcomes.
+    
+    \item \textbf{Executable Agent:} The Executable Agent pattern~\cite{microsoftAgentPatterns} orchestrates a deterministic, predefined workflow. Control flow is explicitly encoded, with the LLM primarily responsible for domain-specific processing within each tool rather than orchestrating overall behavior. This approach provides predictable behavior, easier debugging, structured tool integration, and efficient token usage.
 \end{itemize}
 
+Each option has trade-offs:
 
+\begin{itemize}
+    \item \emph{ReAct}: High flexibility, adaptive reasoning, but non-deterministic and potentially higher latency/cost.
+    \item \emph{Executable}: Predictable, maintainable, supports modular tool orchestration, but less flexible for emergent reasoning scenarios.
+\end{itemize}
+
+\subsubsection{Processing Strategy Options}
+For handling multiple violations in a single file, we considered three strategies:
+
+\begin{itemize}
+    \item \textbf{Fully Sequential:} Processes violations one at a time, ensuring maximal reliability and deterministic outcomes. However, this introduces latency for large files with many violations.
+    
+    \item \textbf{Fully Parallel:} Processes all violations concurrently to maximize throughput. While performant, this increases complexity in managing concurrency, resource contention, and error handling.
+    
+    \item \textbf{Hybrid Approach:} Limits parallel execution to a controlled number of concurrent violations. This balances throughput and stability, leveraging parallelism without overloading resources or compromising reliability.
+\end{itemize}
 
 \subsubsection{Core Tools Architecture}
-To achieve this structured workflow, the agent incorporates five specialized tools, each handling a specific step of the best practices analysis pipeline.
-
-\paragraph{Tool Responsibilities}
-The agent's tool architecture follows a sequential workflow where each tool has a distinct responsibility:
+To maintain modularity and separation of concerns, the agent workflow is decomposed into specialized tools, each responsible for a specific step of the best practices enforcement pipeline:
 
 \begin{itemize}
-    \item \textbf{File Reading Tool}: Responsible for retrieving the complete content of the file being analyzed, ensuring the agent has access to the full context of the code under examination.
+    \item \textbf{File Reading Tool:} Retrieves complete file content and metadata. Ensures full context for downstream analysis.
     
-    \item \textbf{Code Analysis Tool}: The core analysis engine that performs violation detection against YouTube framework best practices using semantic code analysis to understand intent and context.
+    \item \textbf{Code Analysis Tool:} Performs semantic and structural analysis, detecting violations against internal framework rules. Integrates static analysis heuristics with LLM-based reasoning.
     
-    \item \textbf{Violation Explanation Tool}: Generates human-readable explanations for each identified violation, providing developers with clear understanding of why particular code patterns violate best practices.
+    \item \textbf{Violation Explanation Tool:} Converts raw violations into human-readable explanations, providing actionable insight and contextual rationale for developers.
     
-    \item \textbf{Code Fix Tool}: Proposes actionable fix suggestions for identified violations, going beyond problem identification to provide concrete solutions that developers can implement.
+    \item \textbf{Code Fix Tool:} Suggests concrete corrective actions for each violation. Balances automated recommendations with developer flexibility, allowing acceptance, modification, or rejection.
     
-    \item \textbf{Result Consolidation Tool}: Aggregates all analysis results into a structured output format, ensuring the response contains all necessary information for the IDE extension to display results effectively.
+    \item \textbf{Result Consolidation Tool:} Aggregates outputs from all tools into a structured response consumable by the IDE extension, ensuring clear and contextually accurate presentation.
 \end{itemize}
-
-This tool-based architecture provides clear separation of concerns, with each tool handling a specific aspect of the analysis pipeline while maintaining a cohesive workflow. 
-\subsubsection{Processing Strategy}
-The agent employs a balanced processing strategy that weighs performance against reliability. This strategy represents a key architectural decision made after evaluating different processing approaches for handling multiple violations within a single file.
-
-\paragraph{Processing Strategy Options}
-During the design phase, three main processing strategies were considered for handling multiple violations:
-
-\begin{itemize}
-    \item \textbf{Fully Sequential Processing}: Each violation is processed one at a time, ensuring maximum reliability and predictability but potentially resulting in longer processing times for files with many violations.
-    
-    \item \textbf{Fully Parallel Processing}: All violations are processed concurrently, maximizing performance but introducing complexity in managing concurrent operations and potential reliability challenges under high load conditions.
-    
-    \item \textbf{Hybrid Processing Strategy}: A balanced approach that processes violations efficiently while maintaining system stability. This strategy provides significant performance improvements over sequential processing while ensuring reliable operation under various load conditions.
-\end{itemize}
-
-The hybrid processing strategy was selected as it provides the optimal balance between performance and reliability for production use. This strategy ensures that the agent can handle complex analysis tasks efficiently while maintaining system stability and providing consistent results.
 
 \subsubsection{Integration with LLM Infrastructure}
-The agent integrates with an internal AI platform that hosts multiple LLM models. The architecture is model‑agnostic, enabling seamless adoption of newer models as they are released without requiring changes in the orchestration logic. LLM usage is isolated behind stable interfaces so higher‑level logic remains unaffected. The analysis tools depend on the LLM for semantic understanding and code generation. This design ensures long‑term maintainability and benefits from platform improvements without architectural change.
+The agent interfaces with an internal AI platform hosting multiple LLM models. Key design considerations include:
+
+\begin{itemize}
+    \item \textbf{Model-Agnostic Orchestration:} The architecture supports seamless adoption of new models without modifying the agent workflow.
+    \item \textbf{Stable Interfaces:} Each tool interacts with the LLM via encapsulated, stable APIs to ensure maintainability.
+    \item \textbf{Long-Term Flexibility:} New analysis rules or models can be integrated without architectural changes.
+\end{itemize}
+
+\subsection{Evaluation Framework for Architecture Decisions}
+Given the complexity and multiple viable options for agent architecture and processing strategies, empirical evaluation is essential. Decisions cannot be based solely on intuition; performance, reliability, and quality need to be measured under realistic conditions.
+
+\subsubsection{Test Suite Framework}
+A set of 12 test cases was designed to cover a representative variety of scenarios, including:
+
+\begin{itemize}
+    \item Files with few versus many violations
+    \item Simple versus complex violation patterns
+    \item Edge cases where violations overlap or conflict
+    \item Different programming constructs and language features
+\end{itemize}
+
+This diversity ensures that evaluations measure robustness across real-world conditions.
+
+\subsubsection{LLM-as-a-Judge Methodology}
+To assess output quality, we adopted an \emph{LLM-as-a-Judge} methodology. Instead of relying on brittle string matching, which can fail to recognize semantically correct outputs expressed differently, a separate LLM acts as an impartial evaluator:
+
+\begin{itemize}
+    \item Compares agent outputs against gold-standard solutions.
+    \item Evaluates semantic correctness, completeness, and clarity.
+    \item Scores explanations, suggested fixes, and overall alignment with framework best practices.
+\end{itemize}
+
+This approach enables robust evaluation of both ReAct and Executable workflows while capturing the nuances of human-readable explanations and context-aware fixes.
+
+\subsubsection{Key Metrics}
+The evaluation framework measures three primary dimensions:
+
+\begin{itemize}
+    \item \textbf{Accuracy:} Semantic correctness of analysis results and suggested fixes, as judged by the LLM evaluator.
+    \item \textbf{Latency:} End-to-end response time, ensuring real-time usability in the IDE.
+    \item \textbf{Cost:} Token consumption, API usage, and compute resource requirements.
+\end{itemize}
+
+\subsubsection{Candidate Architectures and Strategies}
+The evaluation framework allows systematic comparison of all considered options:
+
+\begin{itemize}
+    \item \textbf{Sequential Executable Agent}
+    \item \textbf{Parallel Executable Agent}
+    \item \textbf{ReAct Agent}
+\end{itemize}
+
+Each candidate is assessed using the test suite and LLM-as-a-Judge methodology, producing data-driven insights into trade-offs between determinism, throughput, accuracy, and operational cost.
+This combination of structured evaluation and modular design ensures that architecture and processing strategies can be selected with confidence, balancing performance, reliability, maintainability, and developer usability.
+
 
 \subsection{YouTube IDE Extension}
 The YouTube IDE Extension serves as the user-facing interface that seamlessly integrates the LLM Best Practices Agent into YouTube developers' daily workflow. Since YouTube developers are the primary target audience for this system, the YouTube IDE Extension was chosen as the natural entry point, leveraging their existing development environment and workflow patterns. This component is designed to provide intelligent, context-aware feedback while maintaining the responsiveness and familiarity that developers expect from their development environment. The feature becomes available when developers enable a user setting in the extension, and entry points only appear for files that belong to the internal YouTube framework for which we enforce best practices.
@@ -167,7 +186,7 @@ A fundamental design decision for the IDE extension was whether to implement use
 
 The primary motivation for user-triggered analysis stems from the need to maintain developer productivity and system efficiency. LLM analysis is computationally expensive and resource-intensive, making continuous analysis impractical for maintaining IDE responsiveness. User-triggered analysis ensures that analysis occurs only when developers specifically request it, providing contextually relevant feedback at optimal moments without interrupting their workflow. This approach aligns with developer expectations of having control over their development environment while ensuring that computational resources are used efficiently.
 
-Table \ref{tab:analysis_approaches} summarizes the trade-offs:
+Table~\ref{tab:analysis_approaches} summarizes the comparison of user-triggered vs. automatic analysis approaches:
 
 \begin{table}[H]
 \centering

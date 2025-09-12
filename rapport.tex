@@ -1,6 +1,11 @@
 \documentclass[oneside,12pt]{Classes/aesm_edspia}
 
-\usepackage{minitoc}
+% Unicode and Arabic support
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[arabic,french,english]{babel}
+% \usepackage{arabtex}
+\usepackage{epstopdf}
 
 \usepackage{amsmath}
 \usepackage{lmodern}%font modern
@@ -35,11 +40,12 @@
 \renewcommand{\thesection}{\arabic {section}}
 \renewcommand{\SC@figure@vpos}{c}% centrer verticalement le caption avec le package sidecap...
 \renewcommand{\fnum@figure}{\small\textbf{Figure~\thefigure}}
-\renewcommand{\fnum@table}{\small\textbf{Tableau~\thetable}}
+\renewcommand{\fnum@table}{\small\textbf{Table~\thetable}}
 
 \makeatother
 \usepackage{subfig}
 \usepackage{pdflscape} % for landscape pages
+\usepackage{pgfgantt} % for Gantt charts
 \def\thechapter{\Roman{chapter}}
 
 %\usepackage[framed,numbered,autolinebreaks,useliterate]{Classes/mcode}
@@ -50,7 +56,6 @@
 \usepackage{listings}
 \lstloadlanguages{xml, java}
 	
-	 \usepackage{listings}
   \usepackage{courier}
  \lstset{
          basicstyle=\footnotesize\ttfamily, 
@@ -62,7 +67,7 @@
          extendedchars=true,         
          breaklines=true,            
          keywordstyle=\color[rgb]{0.43,0,0}\textbf,
-    		frame=b,
+        frame=b,
          commentstyle=\color[rgb]{0.51,0.51,0.51} \textit ,
          stringstyle=\ttfamily  \color[rgb]{0,0.44,0} ,
          showspaces=false,           
@@ -75,7 +80,6 @@
          showstringspaces=false            
  }
  
- \usepackage{caption}
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFont{red}{\color{red}}
 \DeclareCaptionFont{black}{\color{black}}
@@ -86,6 +90,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hypersetup{pageanchor=false}
+\hypersetup{backref=false,pagebackref=false}
 \renewcommand\figurename{\small\textbf{Figure}} 
 
 \addtocounter{page}{-1}%pour revenir à 0
@@ -112,10 +118,10 @@
 
 
 \AnneeUniv{2024/2025}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makethese %% crée la couverture.
 \makesecond
+\hypersetup{pageanchor=true}
 
 \onehalfspacing
 
@@ -134,6 +140,11 @@
 
 \include{Remerciement/remerciement}
 
+%%%%%%%% Abstract/Resume
+\fancyhead[R]{Abstract}
+\include{Resumes/resumeF}
+
+\include{Resumes/resumeA}
 
 %%%%%%%% TOC
 
@@ -147,9 +158,9 @@
     {Table of Contents}%
 
 %%%%minitoc
-\dominitoc % génère la minitoc
-\nomtcrule % supprime les lignes horizontales de la minitoc
-\renewcommand{\mtctitle}{Summary} % Modifie le titre de la minitoc
+%\dominitoc % génère la minitoc
+%\nomtcrule % supprime les lignes horizontales de la minitoc
+%\renewcommand{\mtctitle}{Summary} % Modifie le titre de la minitoc
 
 %%%%
 \tableofcontents
@@ -170,7 +181,7 @@
 \renewcommand{\footrulewidth}{0pt}
 \renewcommand\listfigurename{List of Figures}
 
-\listoffigures \mtcaddchapter 
+\listoffigures 
 
 \fancyhead[R]{List of Figures}
 \newpage
@@ -184,20 +195,15 @@
 \renewcommand{\footrulewidth}{0pt}
 \renewcommand\listtablename{List of Tables}
 
-\listoftables  \mtcaddchapter 
+\listoftables 
 
 \fancyhead[R]{List of Tables}
+%%%%%%%% Acronyms
+\fancyhead[R]{List of Acronyms}
+\include{Acronymes/acronymes}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\fancyhead[R]{Résumés}
-
-\include{Resumes/resumeF}
-
-\include{Resumes/resumeA}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-                       
+                     
 \mainmatter %numéros arabes
 \pagestyle{fancy}
 \fancyhead[R]{Introduction Générale}
@@ -209,14 +215,11 @@
 \renewcommand{\footrulewidth}{0pt}
 
 
-\part{Foundation and Context}
 \include{Chapitre1/chapitre1}
-\part{Theoretical Framework}
 \include{Chapitre2/chapitre2}
-\part{System Design, Implementation and Evaluation}
 \include{Chapitre3/chapitre3}
 \include{Chapitre4/chapitre4}
-\include{Chapitre5/chapitre5}
+% Chapter 5 removed after splitting its content across Chapters 3 and 4
 
 \backmatter
 \pagestyle{fancy}
@@ -238,5 +241,9 @@
 
 \appendix
 \include{Annexe1/annexe1}
+
+% Multilingual Abstracts Page
+\fancyhead[R]{Multilingual Abstracts}
+\include{Resumes/multilingual_abstracts}
 
 \end{document}

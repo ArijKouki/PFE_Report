@@ -63,13 +63,13 @@
  \usepackage[pdftex]{graphicx}
 \usepackage[pdftex, pdfauthor={David Lantiat}, plainpages = false,
 								 pdfpagelabels= true, 
+                 unicode=true,
                  pdfpagelayout = SinglePage,
                  bookmarks,
                  bookmarksopen = true,
                  bookmarksnumbered = true,
                  breaklinks = true,
                  linktocpage,
-                 pagebackref = true, % pour effacer les rappels de pages dans la biblio (utile dans la version papier).  
                  colorlinks = true,
                  linkcolor = blue,
                  urlcolor  = blue,
@@ -83,12 +83,11 @@
     \DeclareGraphicsExtensions{.png, .jpg, .pdf}
      \pdfcompresslevel=9
   \else
-    \usepackage[ps4pdf,plainpages = false, pdfpagelabels, bookmarks,
+    \usepackage[ps4pdf,plainpages = false, pdfpagelabels, unicode=true, bookmarks,
                  bookmarksopen = true,
                  bookmarksnumbered = true,
                  breaklinks = true,
                  linktocpage,
-                 pagebackref,
                  colorlinks = true,
                  linkcolor = blue,
                  urlcolor  = blue,
@@ -265,7 +264,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{minitoc}
-\usepackage[latin1]{inputenc}
+% \usepackage[latin1]{inputenc}
 
 \newcommand{\JURY}{
 \textbf{\large{\textbf{JURY}}}\\[\baselineskip]
@@ -400,6 +399,7 @@ Hosted by~\\[0.3cm]
     \hline
     \textbf{Company Supervisor} & \textbf{University Supervisor} \\
     \hline
+    % \rule{0pt}{1.3cm}\rule[-0.3cm]{0pt}{0pt}\raisebox{-0.3cm}{\includegraphics[width=3.5cm]{Images/irene.png}} & \\[1.2cm]
     \rule{0pt}{2cm} & \\[1cm]
     \hline
 \end{tabular}
@@ -528,9 +528,21 @@ Academic Year : \ANNEEUNIV\\
 
 \AtBeginDocument{%
 
+% Sanitize commands for PDF strings (bookmarks) to avoid hyperref warnings
+\pdfstringdefDisableCommands{%
+  \def\MakeUppercase#1{#1}%
+  \def\textbf#1{#1}%
+  \def\bfseries{}%
+  \def\itshape{}%
+  \def\encodingdefault{}%
+  \let\beginL\relax
+  \let\endL\relax
+  \def\LR#1{#1}%
+  \def\RL#1{#1}%
+  \def\textLR#1{#1}%
+}%
 
-% \def\uppercase{}
-% }
+}
 \AtEndDocument{%
 }
 
