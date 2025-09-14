@@ -18,9 +18,7 @@
 
 %==============================================================================
 \section*{Introduction}
-This chapter presents the evaluation results that informed the final architecture choice, then details how we implemented that choice. We report what the evaluation revealed and, based on those results, what we chose and how it is realized in the system.
-
-The chapter is structured as follows: first, we present the evaluation results and architecture decision; then, we describe the working environment and technology stack; finally, we detail the implementation of both the AI agent backend and the IDE extension frontend.
+Building on the system design established in Chapter 3, this chapter details the implementation of the system. We begin with the working environment and technology stack, then present the concrete implementation of the AI agent backend and the IDE extension frontend.
 
 \section{Working Environment}
 
@@ -61,7 +59,7 @@ The project management system provides project tracking, task management, and co
 
 
 \subsubsection{Google Docs}
-Google Docs was used for authoring and reviewing design documents, leveraging the internal built-in Approvals workflow to formalize stakeholder sign-off. The review process combined live comments, suggestions, and targeted approvals to ensure traceable decisions.
+Google Docs was used for authoring and reviewing design documents, leveraging the internal built-in Approvals workflow to formalize stakeholder sign-off. The review process combined live comments, suggestions, and targeted approvals to ensure traceable decisions.\\
 
 
 These project workflows ensured fast iteration, early detection of issues, and compliance with Google's security and code quality standards.
@@ -70,7 +68,7 @@ These project workflows ensured fast iteration, early detection of issues, and c
 
 \section{Technologies}
 
-This section presents the concrete technologies used to implement the system. We distinguish between industry-standard tools (e.g., Python, TypeScript, JSON) and internal platforms operated within Google (e.g., YouTube DevInfra Agent Framework, internal AI platform).
+This section presents the concrete technologies used to implement the system. We distinguish between industry-standard tools (e.g., Python, TypeScript) and internal platforms operated within Google (e.g., YouTube DevInfra Agent Framework, internal AI platform).
 
 \subsection{Backend Technologies (AI Agent)}
 
@@ -86,13 +84,9 @@ Python's advantages for this implementation include:
     \item \textbf{JSON Processing}: Native support for JSON serialization and deserialization required for API communication.
 \end{itemize}
 
-% (Colab moved under Development Infrastructure as a prototyping environment)
-
 
 \subsubsection{YouTube DevInfra Agent Framework}
-The implementation utilizes the YouTube DevInfra Agent Framework — the serving infrastructure designed by YouTube for YouTube Developer Infrastructure agents. It underpins all YouTube agents, providing standardized execution, deployment, and operational primitives for LLM-powered applications.
-
-This framework was selected because it natively supports the \textit{Executable Agent} pattern and supplies built-in tool orchestration, workflow control, and production lifecycle management. Using it aligns the implementation with DevInfra standards and avoids rebuilding common agent infrastructure, allowing focus on best-practices enforcement logic.
+The implementation utilizes the YouTube DevInfra Agent Framework which is the serving infrastructure that underpins all YouTube agents, providing standardized execution, deployment, and operational primitives for LLM-powered applications. This framework natively supplies built-in tool orchestration, workflow control, and production lifecycle management. Using it aligns the implementation with DevInfra standards and avoids rebuilding common agent infrastructure, allowing focus on best-practices enforcement logic.
 
 
 
@@ -105,7 +99,6 @@ The internal agent framework utilizes several specialized libraries and framewor
 
 \begin{itemize}
     \item \textbf{LLM Interaction Libraries}: Specialized libraries for communicating with internal LLM models, monitoring token usage, and optimizing API calls.
-    \item \textbf{Agent Orchestration Libraries}: Libraries that provide the Executable Agent pattern implementation, tool registration, and workflow management.
     \item \textbf{Prompt Engineering Libraries}: Frameworks for constructing, optimizing, and managing prompts.
 \end{itemize}
 
@@ -128,8 +121,7 @@ Given that the internal IDE is VS Code–like, adopting the VS Code Extension AP
 The realization phase translates architectural decisions into a concrete implementation of the system. 
 It consists of two primary components: (1) the \textbf{AI Agent backend}, responsible for code analysis 
 and violation handling, and (2) the \textbf{IDE Extension frontend}, responsible for developer interaction. 
-This section first discusses the evaluation results that informed our architectural choice, then presents 
-the detailed implementation of the agent and its integration with the IDE extension.
+This section presents the detailed implementation of the agent and its integration with the IDE extension, with brief references to evaluation results where it clarifies the rationale behind specific choices.
 
 \subsection{Agent Realization}
 
@@ -138,7 +130,7 @@ To determine the most suitable agent design, we evaluated three candidate archit
 Sequential Executable, and ReAct Agent. These were assessed against 12 representative test cases covering 
 a range of violation patterns and code complexities.  
 
-For a simple single-violation file (TC8\_PROPS\_MISSING\_EXPORT), the results are shown in 
+For a simple single-violation file, the results are shown in 
 Table~\ref{tab:single_violation_performance_ch4}. Parallel outperformed Sequential by $\sim$33\% in latency, 
 while both were vastly more efficient than ReAct in token usage.
 
@@ -161,9 +153,8 @@ ReAct Agent & 15.3s & 37,989 & 1,523 \\
 \end{table}
 
 Scaling to the full evaluation suite (Figures~\ref{fig:latency_comparison_ch4}--\ref{fig:accuracy_comparison_ch4}) 
-revealed deeper trade-offs. Parallel maintained faster throughput but suffered reliability issues such as 
-\texttt{OverLimitException} and \texttt{DEADLINE\_EXCEEDED}. Sequential was slower but fully reliable with identical 
-accuracy ($\sim$91.7\%). ReAct proved infeasible due to extreme token consumption and lower accuracy.
+revealed deeper trade-offs.
+
 
 \begin{figure}[H]
 \centering
@@ -172,12 +163,16 @@ accuracy ($\sim$91.7\%). ReAct proved infeasible due to extreme token consumptio
 \label{fig:latency_comparison_ch4}
 \end{figure}
 
+As shown in Figure~\ref{fig:latency_comparison_ch4}, the latency profile favors the fully parallel executable agent, which completed the suite roughly 20–25\% faster than the sequential counterpart. However, latency alone is not decisive for IDE scenarios, where reliability under load is equally critical.
+
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/cost.png}
 \caption{Cost Analysis Across 12 Test Cases}
 \label{fig:cost_comparison_ch4}
 \end{figure}
+
+As shown in Figure~\ref{fig:cost_comparison_ch4}, token cost highlights a fundamental inefficiency in the ReAct agent: due to iterative reasoning–acting loops, it consumes orders of magnitude more tokens (≈6x in our suite) to achieve comparable outcomes. This renders ReAct non‑viable for an interactive IDE use case.
 
 \begin{figure}[H]
 \centering
@@ -186,10 +181,9 @@ accuracy ($\sim$91.7\%). ReAct proved infeasible due to extreme token consumptio
 \label{fig:accuracy_comparison_ch4}
 \end{figure}
 
-From these results, the final decision was to adopt a \textbf{Parallel Executable architecture with concurrency limiting}. 
-This preserves most of the performance advantage of Parallel while ensuring reliability through semaphore-based 
-concurrency control, preventing resource saturation. This hybrid approach combines determinism, throughput, and robustness, 
-making it suitable for production use in developer IDEs.
+As shown in Figure~\ref{fig:accuracy_comparison_ch4}, both executable variants achieved high accuracy (Sequential at ≈91.7\%, Parallel matching on successful runs). Yet, the apparent parity masks a practical limitation: under heavier workloads, the fully parallel strategy occasionally failed with resource‑limit and deadline errors. In an IDE, such instability outweighs raw speed advantages.\\
+
+Synthesizing these findings, we adopted a \textbf{Parallel Executable architecture with bounded concurrency}. By enforcing semaphore‑based limits on in‑flight LLM calls, the design retains most of the latency advantage of full parallelism while eliminating overload‑induced failures. This yields a deterministic, high‑throughput, and reliable execution profile appropriate for production IDE integration.
 
 \subsubsection{Agent Implementation Overview}
 The AI Agent implements the chosen architecture using Python and integrates with Google’s internal AI platform 
@@ -201,7 +195,7 @@ file reading, analysis, explanation generation, fix generation, and result conso
 At startup, the agent performs several critical setup tasks:
 \begin{itemize}
     \item \textbf{Model Selection:} Configured to use the latest Gemini-based model trained on internal Google code.
-    \item \textbf{Convention Loading:} Best practices are retrieved from repository-stored JSON files and cached in memory.
+    \item \textbf{Convention Loading:} Best practices are defined as in-memory Python objects and loaded at startup into a cache for constant-time access.
     \item \textbf{Tool Registration:} The five specialized tools are instantiated and registered into a deterministic workflow.
 \end{itemize}
 
@@ -217,7 +211,7 @@ The implementation follows a layered orchestration pattern:
 \subsubsection{Core Tools Implementation}
 The agent implements five specialized tools, each corresponding to one stage of the analysis pipeline. Tools are designed as independent classes that expose a public \texttt{run()} method, which enforces a clear input/output contract and raises typed errors when failures occur. This contract-based design makes the system modular, testable, and resilient to partial failures.
 
-\paragraph{ReadFileFromWorkspace Tool}
+\paragraph{ReadFileFromWorkspace Tool}\\
 \textbf{Contract:} input = file path; output = file content (string).  
 The ReadFileFromWorkspace tool is responsible for retrieving the contents of the developer’s source file. Implementation details include:
 \begin{itemize}
@@ -226,17 +220,17 @@ The ReadFileFromWorkspace tool is responsible for retrieving the contents of the
     \item \textbf{Robustness:} Handles large files by streaming content, ensuring memory efficiency.
 \end{itemize}
 
-\paragraph{CodeAnalysisTool}
+\paragraph{CodeAnalysisTool}\\
 \textbf{Contract:} input = file content; output = list of base violations.  
 This tool forms the analysis core of the system. It detects framework violations by orchestrating LLM queries enriched with contextual information.
 \begin{itemize}
     \item \textbf{Prompt construction:} Implements a template system with slots for file type, code snippet, and dynamically filtered convention definitions.
     \item \textbf{Context injection:} Selects relevant conventions from the cache and injects them into the prompt to guide the model.
-    \item \textbf{Response parsing:} Uses strict JSON schema validation with recovery mechanisms for malformed LLM responses.
+    \item \textbf{Response parsing:} Uses strict schema validation with recovery mechanisms for malformed LLM responses.
     \item \textbf{Performance optimizations:} Employs caching of templates and convention definitions, reducing repeated token usage and lowering latency.
 \end{itemize}
 
-\paragraph{ViolationExplanationTool}
+\paragraph{ViolationExplanationTool}\\
 \textbf{Contract:} input = base violation; output = natural-language explanation.  
 The ViolationExplanationTool generates educational explanations that help developers understand not only what the violation is, but why it matters.
 \begin{itemize}
@@ -245,7 +239,7 @@ The ViolationExplanationTool generates educational explanations that help develo
     \item \textbf{Implementation detail:} Each explanation is post-processed for clarity, removing redundant phrasing and enforcing concise output.
 \end{itemize}
 
-\paragraph{CodeFixTool}
+\paragraph{CodeFixTool}\\
 \textbf{Contract:} input = violation + explanation; output = code fix (annotated snippet).  
 This tool provides actionable, safe, and educational fixes.
 \begin{itemize}
@@ -256,9 +250,9 @@ This tool provides actionable, safe, and educational fixes.
     \item \textbf{Error handling:} Raises a \texttt{FixGenerationError} if the LLM output cannot be parsed or validated as compilable code.
 \end{itemize}
 
-\paragraph{Finish Tool}
+\paragraph{Finish Tool}\\
 \textbf{Contract:} input = violations + explanations + fixes; output = structured response for IDE extension.  
-The Finish Tool acts as the consolidation component, producing a structured JSON-like response that the IDE extension can directly render.
+The Finish Tool acts as the consolidation component, producing a structured JSON response that the IDE extension can directly render.
 \begin{itemize}
     \item \textbf{Aggregation:} Combines violations, explanations, and fixes into a unified structure keyed by violation ID.
     \item \textbf{Deduplication:} Identifies overlapping or redundant violations and merges them to reduce noise.
@@ -270,15 +264,6 @@ The Finish Tool acts as the consolidation component, producing a structured JSON
 
 
 \subsubsection{Processing Workflow}
-The hybrid strategy is realized in three stages:
-\begin{enumerate}
-    \item \textbf{Sequential Preprocessing:} Full file content is read and all violations are identified.
-    \item \textbf{Parallel Processing:} Explanation and fix generation tasks are executed concurrently with semaphore-based 
-    limits on in-flight LLM calls.
-    \item \textbf{Result Consolidation:} Outputs are aggregated, validated, and prepared for the IDE extension.
-\end{enumerate}
-
-Figure~\ref{fig:agent_activity} illustrates this workflow.
 
 \begin{figure}[H]
     \centering
@@ -286,6 +271,16 @@ Figure~\ref{fig:agent_activity} illustrates this workflow.
     \caption{Agent Processing Activity Diagram}
     \label{fig:agent_activity}
 \end{figure}
+
+As illustrated in the activity diagram in figure~\ref{fig:agent_activity}, the hybrid strategy is realized in three main stages:
+\begin{enumerate}
+    \item \textbf{Sequential Preprocessing:} Full file content is read and all violations are identified.
+    \item \textbf{Parallel Processing:} Explanation and fix generation tasks are executed concurrently with semaphore-based 
+    limits on in-flight LLM calls.
+    \item \textbf{Result Consolidation:} Outputs are aggregated, validated, and prepared for the IDE extension.
+\end{enumerate}
+
+
 
 \subsubsection{Resilience and Error Handling}
 The system ensures graceful degradation under failures:
@@ -297,7 +292,7 @@ The system ensures graceful degradation under failures:
 \end{itemize}
 
 \subsubsection{Convention Data Management}
-The convention data management system implements loading, caching, and retrieval mechanisms for YouTube framework best practices. The conventions are stored as Python objects in an array, each containing a unique identifier, description, correct example, and incorrect example. For efficient runtime access, the system constructs an in-memory map keyed by convention ID, allowing the agent tools to retrieve only the relevant convention on demand. 
+The convention data management system implements loading, caching, and retrieval mechanisms for YouTube framework best practices. The conventions are stored as Python objects in an array, each containing a unique identifier, description, correct example, and incorrect example. For efficient runtime access, the system constructs an \textbf{in-memory map} keyed by convention ID, allowing the agent tools to retrieve only the relevant convention on demand. 
 
 \paragraph{Loading and Initialization}
 At startup, all convention objects are loaded into memory from the Python array. A dictionary (map) is created with convention IDs as keys and convention objects as values, providing constant-time access for subsequent tool invocations.
