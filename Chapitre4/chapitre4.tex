@@ -194,7 +194,7 @@ file reading, analysis, explanation generation, fix generation, and result conso
 \paragraph{Configuration and Initialization}
 At startup, the agent performs several critical setup tasks:
 \begin{itemize}
-    \item \textbf{Model Selection:} Configured to use the latest Gemini-based model trained on internal Google code.
+    \item \textbf{Model Selection:} Configured to use an internal Gemini 2.5 Pro model trained for code tasks and integrated with organizational safeguards.
     \item \textbf{Convention Loading:} Best practices are defined as in-memory Python objects and loaded at startup into a cache for constant-time access.
     \item \textbf{Tool Registration:} The five specialized tools are instantiated and registered into a deterministic workflow.
 \end{itemize}
@@ -207,6 +207,53 @@ The implementation follows a layered orchestration pattern:
     \item Metrics and token usage are logged per tool, enabling fine-grained observability.
     \item Separation of concerns allows tools to be replaced or extended without modifying orchestration logic.
 \end{itemize}
+
+\subsubsection{Convention Data Management}
+The convention data layer provides loading and retrieval of YouTube framework best practices via an in-memory map. Conventions are stored as Python objects (ID, description, correct/incorrect examples) and exposed through an in-memory map (dictionary) keyed by convention ID.
+
+\paragraph{Loading and Initialization}
+At startup, convention objects are materialized in memory and inserted into an in-memory map keyed by ID for constant-time (O(1)) access. Tools query this map to retrieve only entries required for a given file/language.
+
+\paragraph{Memory Caching and Access}
+The in-memory map ensures constant-time lookups and low-latency access while keeping responsibilities clear between the AI and data layers:
+\begin{itemize}
+    \item \textbf{Efficient Lookup}: Tools retrieve conventions by ID from the map; no full scans
+    \item \textbf{Targeted Selection}: Only entries relevant to the current file and context are fetched
+    \item \textbf{Isolation}: The data layer serves minimal slices so prompts stay compact
+\end{itemize}
+
+\subsubsection{AI Configuration and Prompting}
+The LLM and prompt configuration for interactive IDE use are as follows:
+ 
+\begin{itemize}
+    \item \textbf{Internal, code-capable LLM}: specialized for reading and fixing code; tuned for stable, reproducible outputs in the IDE.
+    \item \textbf{Temperature (0--0.2)}: controls randomness; low values keep answers consistent and precise.
+    \item \textbf{top\_p (1.0)}: does not prune options; we rely on low temperature for control instead.
+    \item \textbf{Stop sequences}: markers that tell the model when to stop, preventing extra chatter.
+    \item \textbf{Token cap}: hard limit on output length to keep responses fast and costs bounded.
+    \item \textbf{Few-shot exemplars (1--2)}: tiny examples that anchor the required format and tone.
+\end{itemize}
+
+Prompts follow a \textbf{task-specific instruction template} with three sections:
+\begin{enumerate}
+    \item Role and objective
+    \item Input constraints
+    \item Required output schema
+\end{enumerate}
+To avoid prompt bloat, the agent injects only the minimal set of relevant conventions: given the file language and shallow syntactic cues, we filter conventions by rule keywords and simple AST patterns, then de-duplicate and order them by estimated relevance.
+
+\paragraph{Hallucination Suppression and Guardrails}
+To minimize hallucinated rules or edits, responses are checked against the loaded convention IDs and file bounds. Unknown \texttt{rule\_id} values or edits outside the target file range are rejected and re-asked with a narrower prompt that explicitly forbids introducing new rules or editing unrelated regions. Explanations must cite an existing convention and reference lines in the provided snippet.
+
+\paragraph{Disambiguation and Self-Checking}
+When the model indicates ambiguity (multiple plausible rules overlap), the agent triggers a short self-check pass that asks the LLM to select the best-matching rule given the snippet and to justify the choice briefly. This step runs only when overlapping candidates are detected to limit cost.
+
+\paragraph{Determinism and Repeatability}
+Determinism is prioritized: prompts are static except for file-specific content and filtered conventions; tool execution order is fixed; any randomized tie-breakers (e.g., ordering of equal-relevance conventions) are seeded. With temperature near zero and constrained decoding, identical inputs yield stable outputs across runs.
+
+\paragraph{Cost/Latency Optimizations}
+The agent avoids unnecessary tokens by: (i) filtering conventions aggressively, (ii) chunking very large files and analyzing only the neighborhood of detected findings, (iii) caching prompt templates and convention snippets, and (iv) truncating rationales to concise, developer-focused text. Identical content hashes short-circuit repeated analysis.
+
 
 \subsubsection{Core Tools Implementation}
 The agent implements five specialized tools, each corresponding to one stage of the analysis pipeline. Tools are designed as independent classes that expose a public \texttt{run()} method, which enforces a clear input/output contract and raises typed errors when failures occur. This contract-based design makes the system modular, testable, and resilient to partial failures.
@@ -224,35 +271,30 @@ The ReadFileFromWorkspace tool is responsible for retrieving the contents of the
 \textbf{Contract:} input = file content; output = list of base violations.  
 This tool forms the analysis core of the system. It detects framework violations by orchestrating LLM queries enriched with contextual information.
 \begin{itemize}
-    \item \textbf{Prompt construction:} Implements a template system with slots for file type, code snippet, and dynamically filtered convention definitions.
-    \item \textbf{Context injection:} Selects relevant conventions from the cache and injects them into the prompt to guide the model.
-    \item \textbf{Response parsing:} Uses strict schema validation with recovery mechanisms for malformed LLM responses.
-    \item \textbf{Performance optimizations:} Employs caching of templates and convention definitions, reducing repeated token usage and lowering latency.
+    \item \textbf{Prompt construction:} Implements a template system with slots for file type and code snippet, guiding the model to produce structured findings.
+    \item \textbf{Convention usage:} Retrieves needed convention entries via the Convention Data layer and injects only the minimal identifiers/text required for accurate matching.
 \end{itemize}
 
 \paragraph{ViolationExplanationTool}\\
 \textbf{Contract:} input = base violation; output = natural-language explanation.  
 The ViolationExplanationTool generates educational explanations that help developers understand not only what the violation is, but why it matters.
 \begin{itemize}
-    \item \textbf{Contextualization:} Pulls in violation metadata (rule violated, line number, code snippet) to ground explanations in concrete evidence.
-    \item \textbf{Generation style:} Prompts the LLM to balance technical accuracy with readability, avoiding overly generic statements.
-    \item \textbf{Implementation detail:} Each explanation is post-processed for clarity, removing redundant phrasing and enforcing concise output.
+    \item \textbf{Contextualization:} Uses violation metadata (rule, range, snippet) to ground explanations in concrete evidence.
+    \item \textbf{Style:} Balances technical accuracy with readability; post-processed for concision.
 \end{itemize}
 
 \paragraph{CodeFixTool}\\
 \textbf{Contract:} input = violation + explanation; output = code fix (annotated snippet).  
 This tool provides actionable, safe, and educational fixes.
 \begin{itemize}
-    \item \textbf{Safety:} Fixes are constrained to local code changes, avoiding edits that break APIs or dependencies.
-    \item \textbf{Self-containment:} Ensures that each fix can be applied without requiring modifications in other files.
-    \item \textbf{Contextual adaptation:} Uses file content and violation metadata to adapt fixes to the surrounding code style.
-    \item \textbf{Educational emphasis:} Each fix includes explanatory comments describing why the change is required.
-    \item \textbf{Error handling:} Raises a \texttt{FixGenerationError} if the LLM output cannot be parsed or validated as compilable code.
+    \item \textbf{Locality:} Constrains edits to the smallest affected range; avoids breaking API boundaries.
+    \item \textbf{Applicability:} Produces self-contained edits that require no cross-file modifications.
+    \item \textbf{Style adherence:} Adapts to surrounding code style using the snippet and metadata.
 \end{itemize}
 
 \paragraph{Finish Tool}\\
 \textbf{Contract:} input = violations + explanations + fixes; output = structured response for IDE extension.  
-The Finish Tool acts as the consolidation component, producing a structured JSON response that the IDE extension can directly render.
+The Finish Tool acts as the consolidation component, producing a structured JSON string that the IDE extension can directly render.
 \begin{itemize}
     \item \textbf{Aggregation:} Combines violations, explanations, and fixes into a unified structure keyed by violation ID.
     \item \textbf{Deduplication:} Identifies overlapping or redundant violations and merges them to reduce noise.
@@ -260,11 +302,11 @@ The Finish Tool acts as the consolidation component, producing a structured JSON
     \item \textbf{Formatting:} Applies consistent formatting (line numbers, code blocks, explanations) to improve readability in the UI.
 \end{itemize}
 
-\noindent Collectively, these tools form a deterministic pipeline coordinated by the agent’s \texttt{execute()} method. Each tool adheres to explicit contracts, which improves modularity, observability (per-tool token usage is logged), and long-term maintainability.
+\noindent Each tool returns a Python object (dict/list) with a JSON-like structure that matches its contract; the final agent response is serialized to a JSON string for the IDE. For machine-consumable steps, we request strict JSON shapes; outputs are validated against a JSON Schema, with targeted repair prompts on failure. When supported, constrained decoding (JSON mode) reduces invalid-structure retries.
 
+Collectively, these tools form a deterministic pipeline coordinated by the agent’s \texttt{execute()} method. Each tool adheres to explicit contracts, which improves modularity, observability (per-tool token usage is logged), and long-term maintainability.
 
 \subsubsection{Processing Workflow}
-
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/activity_diagram.png}
@@ -281,7 +323,6 @@ As illustrated in the activity diagram in figure~\ref{fig:agent_activity}, the h
 \end{enumerate}
 
 
-
 \subsubsection{Resilience and Error Handling}
 The system ensures graceful degradation under failures:
 \begin{itemize}
@@ -291,20 +332,6 @@ The system ensures graceful degradation under failures:
     \item Partial results are preserved, ensuring developers always receive usable feedback.
 \end{itemize}
 
-\subsubsection{Convention Data Management}
-The convention data management system implements loading, caching, and retrieval mechanisms for YouTube framework best practices. The conventions are stored as Python objects in an array, each containing a unique identifier, description, correct example, and incorrect example. For efficient runtime access, the system constructs an \textbf{in-memory map} keyed by convention ID, allowing the agent tools to retrieve only the relevant convention on demand. 
-
-\paragraph{Loading and Initialization}
-At startup, all convention objects are loaded into memory from the Python array. A dictionary (map) is created with convention IDs as keys and convention objects as values, providing constant-time access for subsequent tool invocations.
-
-\paragraph{Memory Caching and Access}
-This in-memory caching strategy ensures low-latency access during code analysis:
-
-\begin{itemize}
-    \item \textbf{Efficient Lookup}: Tools retrieve conventions by ID from the map, avoiding iteration over the full array.
-    \item \textbf{Dynamic Selection}: Only conventions relevant to the current file type and analysis context are queried, minimizing unnecessary data processing.
-    \item \textbf{Lightweight and Fast}: The cache resides entirely in memory, requiring no external services, and supports rapid retrieval during concurrent tool executions.
-\end{itemize}
 
 \subsection{Extension Integration}
 
@@ -318,16 +345,18 @@ The IDE Extension implements a layered architecture that integrates with the ove
     \label{fig:high_level_frontend_architecture}
 \end{figure}
 
-The architecture follows a clear request-response pattern where user interactions trigger analysis requests that flow through the IDE Service proxy for authentication and authorization, then to the Agent Service in the backend for processing. Responses follow the same path in reverse, ensuring secure and authenticated communication throughout the entire pipeline while maintaining clear separation of responsibilities between layers.
+As illustrated in figure ~\ref{fig:high_level_frontend_architecture}, the architecture follows a clear request-response pattern where user interactions trigger analysis requests that flow through the \textbf{IDE Service} proxy for authentication and authorization, then to the \textbf{Agent Service} in the backend for processing. Responses follow the same path in reverse, ensuring secure and authenticated communication throughout the entire pipeline while maintaining clear separation of responsibilities between layers.
 
 \paragraph{Extension Components}
 The extension's internal architecture consists of three core components that work together to provide seamless integration with the development environment, as illustrated in Figure~\ref{fig:high_level_frontend_architecture}.
 
-\textbf{Init Component}: Handles extension initialization, reading user settings, registering commands and editor actions, and performing health checks. The component ensures proper setup of all dependencies.
+\begin{itemize}
+    \item \textbf{Init Component}: Handles extension initialization, reading user settings, registering commands and editor actions, and performing health checks. The component ensures proper setup of all dependencies.
 
-\textbf{Controller}: Centralizes all UI-related state and orchestrates interactions between components. The Controller processes commands, manages notifications, routes analysis results, renders diagnostics and hover-based suggestions, and coordinates stale-state transitions to ensure consistent behavior across all entry points.
+    \item \textbf{Controller}: Centralizes all UI-related state and orchestrates interactions between components. The Controller processes commands, manages notifications, routes analysis results, renders diagnostics and hover-based suggestions, and coordinates stale-state transitions to ensure consistent behavior across all entry points.
 
-\textbf{AgentClient}: Manages communication with the backend services through the proxy layer. The component handles request formatting, implements retry logic with exponential backoff, manages timeouts, and processes responses from the AI agent.
+    \item \textbf{AgentClient}: Manages communication with the backend services through the proxy layer. The component handles request formatting, implements retry logic with exponential backoff, manages timeouts, and processes responses from the AI agent.
+\end{itemize}
 
 \subsubsection{User Interaction}
 The feature is controlled through a dedicated \textbf{user setting}. This setting appears as a simple checkbox: when enabled, the feature becomes available in the IDE; when disabled, it is entirely hidden from the interface. This ensures that developers can opt in seamlessly without cluttering the environment for those who do not use the feature.
@@ -372,13 +401,19 @@ The results of the analysis are surfaced through VS Code’s native \textbf{diag
 For more detailed guidance, an integrated \textbf{hover provider} presents formatted fix suggestions directly within the editor. This approach allows fixes to be displayed with proper syntax highlighting and inline code snippets, offering a clear and actionable path to resolution without leaving the development workflow.
 
 \subsubsection{Stale Diagnostics Handling}
-One of the most challenging aspects of IDE integration is maintaining diagnostic accuracy as developers continuously modify their code. The extension implements a sophisticated two-tiered system that balances immediate responsiveness with accurate analysis results.
-
-\paragraph{The Challenge}
 Traditional diagnostic systems struggle with code that changes rapidly, often displaying outdated information that confuses developers and reduces trust in the tool. The challenge is to provide immediate visual feedback while ensuring that diagnostics remain accurate and relevant to the current code state.
 
-\paragraph{Two-Tiered Solution}  
-The extension handles stale diagnostics using a two-tiered approach that separates immediate responsiveness from precise re-anchoring:  
+The extension implements a sophisticated two-tiered system that balances immediate responsiveness with accurate analysis results.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.55]{Images/stale_diagnostics.png}
+    \caption{Stale Diagnostics Handling: Two-Tiered System}
+    \label{fig:stale_diagnostics_method}
+\end{figure}
+
+As shown in Figure~\ref{fig:stale_diagnostics_method}, this sequence diagram summarizes how instant adjustments and debounced re-anchoring work together to keep diagnostics responsive and accurate.
 
 \textbf{Tier 1 - Instant Adjustment}: Provides immediate feedback on every keystroke. Diagnostics are shifted based on simple text edits and marked as [Outdated] if the flagged code itself is edited. This ensures high \textbf{responsiveness} without impacting performance.  
 
@@ -388,17 +423,9 @@ The extension handles stale diagnostics using a two-tiered approach that separat
     \item \textbf{Scan with Regex}: Finds all possible text matches across the document.  
     \item \textbf{Re-anchor}: Moves the diagnostic to the correct new location based on the highest match score.  
 \end{enumerate}  
+
 This two-tiered strategy balances responsiveness with accuracy, ensuring developers receive timely feedback while maintaining the integrity of diagnostics even during active code editing.
 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.55]{Images/stale_diagnostics.png}
-    \caption{Stale Diagnostics Handling: Two-Tiered System (Illustrative)}
-    \label{fig:stale_diagnostics_method}
-\end{figure}
-
-This approach ensures that developers receive immediate visual feedback while maintaining diagnostic accuracy through intelligent analysis timing and state management, representing a significant technical contribution to IDE integration challenges.
 
 \subsubsection{Resilience and Communication}
 The extension implements comprehensive error handling and resilience mechanisms to ensure reliable operation in production environments. The communication system uses internal RPC infrastructure with JSON payloads for debugging and cross-language compatibility.
@@ -409,7 +436,7 @@ Retry mechanisms with exponential backoff and bounded attempts ensure operation 
 
 
 \section*{Conclusion}
-This chapter presented the evaluation results, the resulting architecture decision (Parallel Executable with concurrency limiting), and the complete implementation: environment, technologies, and realization across backend and IDE. The system is production-oriented, balancing speed with stability and cost.
+This chapter translated the architectural choices into a working system and validated them empirically. We evaluated three agent designs across multiple cases and adopted a bounded-parallel executable architecture that preserves the latency benefits of parallelism while ensuring reliability under load. We then detailed the agent realization and the IDE integration. Together, these components deliver framework-aware guidance directly in the editor with predictable latency, controlled cost, and high accuracy.
 
 %==============================================================================
 \end{spacing}
